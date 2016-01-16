@@ -105,7 +105,7 @@
 		var currColorPointer = 0;
 		var levelColorArray = [0x0000FF, 0xFF0000, 0x33FF00, 0xFFFFFF, 0xFF00CC];
 		var tunnelSegments = [];
-		var TUNNEL_VELOCITY = 2.3;
+		var TUNNEL_VELOCITY = 2.3 * gameLevel;
 		var particles = [];
 
 		// asteroidVariables
@@ -396,7 +396,6 @@
 					explosionSound.play();
 					stopGame();
 				}
-
             } else if(gameState == GameStateEnum.DEAD) {
 
 				if(newGameState == GameStateEnum.MENU) {

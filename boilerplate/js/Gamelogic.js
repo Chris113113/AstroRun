@@ -30,7 +30,7 @@ function initializeAsteroidGame() {
 function updateAsteroids() {
     for(var i = asteroids.length - 1; i >= 0; i--) {
         var obj = asteroids[i];
-        obj.position.z += astVelocity;
+        obj.position.z += astVelocity + gameLevel*5;
         if(obj.position.z > 500){
             scene.remove(obj);
             asteroids.splice(i,1);

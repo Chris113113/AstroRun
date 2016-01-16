@@ -2,7 +2,7 @@ function updateTunnel() {
 
     tunnelSegments.forEach(function (item) {
 
-        item[0].position.z += TUNNEL_VELOCITY;
+        item[0].position.z += TUNNEL_VELOCITY + gameLevel;
         item[1].material.color = new THREE.Color(levelColorArray[currColorPointer]);
         if(item[0].position.z >= 0.0) {
             item[0].position.z = TUNNEL_BACK;
@@ -14,7 +14,7 @@ function updateTunnel() {
 
 function updateParticles() {
     particles.forEach(function (item) {
-        item.position.z += 3.00;
+        item.position.z += 3.00 + gameLevel;
 
         if(item.position.z >= 0.0) {
             item.position.z = TUNNEL_BACK-800.0;
