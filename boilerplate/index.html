@@ -42,6 +42,7 @@
 			<div id="game-hud">
 				<p id="hud-level">Level 1</p>
 				<p id="hud-time">00:05</p>
+				<div id="health-bar"></div>
 			</div>
 			<div id="game-hud-dead">
 				<h1>YOU DIED</h1>
@@ -63,6 +64,7 @@
 		// start in the init state
 		var gameState = GameStateEnum.INIT;
 		var gameTimer = new THREE.Clock(false);
+		var gameLives = 3;
 		var gameLevel = 1;
 		var gameTimerUpdateString = undefined;
 
@@ -260,6 +262,8 @@
 		function resetGameState() {
 			gameTimer = new THREE.Clock(false);
 			gameLevel = 1;
+			gameLives = 3;
+
 			if(gameTimerUpdateString) window.clearInterval(gameTimerUpdateString);
 			document.getElementById('hud-time').innerText = "00:00";
 		}
@@ -276,6 +280,31 @@
 				var seconds = parseInt(gameTimer.getElapsedTime() % 60);
 				document.getElementById('hud-time').innerText = pad(minutes, 2) + ":" + pad(seconds, 2);
 			}, 500);
+
+			drawHealthBar();
+		}
+
+		function playerHit() {
+			gameLives -= 1;
+			drawHealthBar();
+
+			if(gameLives <= 0) {
+				transitionTo(GameStateEnum.DEAD)
+			}
+		}
+
+
+		function drawHealthBar() {
+			var healthBar = document.getElementById('health-bar')
+
+			if(gameLives == 3)
+				healthBar.className = "full";
+			else if(gameLives == 2)
+                healthBar.className = "medium";
+			else if(gameLives == 1)
+				healthBar.className = "low";
+			else if(gameLives <= 0)
+				healthBar.className = "empty";
 		}
 
 		// stops the current game, but doesnt destroy the game state

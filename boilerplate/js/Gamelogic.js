@@ -124,11 +124,6 @@ function generateAsteroid(mesh) {
     return sphere;
 }
 
-function onCollision() {
-    console.log('Collision!');
-    transitionTo(GameStateEnum.DEAD);
-}
-
 function detectCollisions(obj) {
     var pos = obj.position.distanceTo(spaceship.position);
     if(pos < 50) {
@@ -137,7 +132,7 @@ function detectCollisions(obj) {
         var max = compBox.max;
         var newBox = new THREE.Box3(new THREE.Vector3(min.x+1, min.y+1, min.z+1), new THREE.Vector3(max.x-1, max.y-1, max.z-1));
         if (newBox.isIntersectionBox(new THREE.Box3().setFromObject(spaceship))) {
-            onCollision();
+            playerHit();
         }
     }
 }

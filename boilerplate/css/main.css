@@ -83,6 +83,41 @@ body {
 	text-align: right;
 }
 
+#menu #game-hud #health-bar {
+	width: 150px;
+	height: 20px;
+	border-radius: 4px;
+	border: 2px solid white;
+}
+
+#menu #game-hud #health-bar.full {
+	background: green; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(left, green , yellow, red); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(right, green, yellow, red); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(right, green, yellow, red); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to right, green , yellow, red); /* Standard syntax */
+}
+
+#menu #game-hud #health-bar.medium {
+	background: yellow; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(left, transparent , yellow, red); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(right, transparent, yellow, red); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(right, transparent, yellow, red); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to right, transparent , yellow, red); /* Standard syntax */
+}
+
+#menu #game-hud #health-bar.low {
+	background: red; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(left, transparent , transparent, red); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(right, transparent, transparent, red); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(right, transparent, transparent, red); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to right, transparent , transparent, red); /* Standard syntax */
+}
+
+#menu #game-hud #health-bar.empty {
+	background: transparent;
+}
+
 #menu #game-hud-dead {
 	display: none;
 	position: absolute;
