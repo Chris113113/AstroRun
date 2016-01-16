@@ -163,6 +163,7 @@ function detectCollisions(obj) {
     if(!spaceship.canCollide) {
         return;
     }
+
     var pos = obj.position.distanceTo(spaceship.position);
     if(pos < 50) {
         var compBox = new THREE.Box3().setFromObject(obj);

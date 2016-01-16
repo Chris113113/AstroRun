@@ -199,6 +199,7 @@
 		function clearScene() {
 			asteroids = [];
 			scene.remove(spaceship);
+			spaceship = undefined;
 			for( var i = scene.children.length - 1; i >= 0; i--) {
 				var obj = scene.children[i];
 				scene.remove(obj);
@@ -318,7 +319,9 @@
 
 			drawHealthBar();
 
+			console.log("Have I died?")
 			if(gameLives <= 0) {
+				console.log("I have died")
 				scene.remove( spaceship );
 				transitionTo(GameStateEnum.DEAD)
 			}
@@ -366,7 +369,7 @@
 		function transitionTo(newGameState) {
 			if(gameState == GameStateEnum.INIT) {
 				if(newGameState != GameStateEnum.MENU) {
-					throw new Error("Invalid state transition");
+					throw new Error("Invalid state transition: " + newGameState);
 				}
 
 				resetGameState();
@@ -378,19 +381,22 @@
 					startNewGame();
 					scenePlaying();
 				} else {
-					throw new Error("Invalid state transition");
+					throw new Error("Invalid state transition: " + newGameState);
 				}
 			} else if(gameState == GameStateEnum.CREDITS) {
 				if(newGameState != GameStateEnum.MENU) {
-					throw new Error("Invalid state transition");
+					throw new Error("Invalid state transition: " + newGameState);
 				}
 			} else if(gameState == GameStateEnum.PLAYING) {
-				if(newGameState != GameStateEnum.DEAD) {
-					throw new Error("Invalid state transition");
+				if (newGameState == GameStateEnum.PLAYING) {
+					// ignore
+				} else if (newGameState != GameStateEnum.DEAD) {
+					throw new Error("Invalid state transition: " + newGameState);
+				} else {
+					explosionSound.play();
+					stopGame();
 				}
 
-				explosionSound.play();
-				stopGame();
             } else if(gameState == GameStateEnum.DEAD) {
 
 				if(newGameState == GameStateEnum.MENU) {
@@ -399,7 +405,7 @@
 					startNewGame();
 					scenePlaying();
 				} else {
-					throw new Error("Invalid state transition");
+					throw new Error("Invalid state transition: " + newGameState);
 				}
             } else {
 				throw new Error("Invalid state");
@@ -451,7 +457,7 @@
 		function animate() {
 
 			// loop on request animation loop
-			// - it has to be at the begining of the function
+			// - it has to be at the beginning of the function
 			// - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 			requestAnimationFrame(animate);
 
