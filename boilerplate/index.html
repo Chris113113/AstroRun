@@ -96,6 +96,7 @@
 		// ENVIRONMENT VARIABLES
 		///////////////////////////
 		var FOG_FALLOFF = 0.003;
+		var RECOVER_TIME = 333;
 
 		// tunnel variables
 		var TUNNEL_BACK = -800.0;
@@ -330,9 +331,9 @@
 					setTimeout(function() {
 						scene.add(spaceship);
 						spaceship.canCollide = true;
-					}, 250);
-				}, 250);
-			}, 250);
+					}, RECOVER_TIME/3);
+				}, RECOVER_TIME/3);
+			}, RECOVER_TIME/3);
 		}
 
 

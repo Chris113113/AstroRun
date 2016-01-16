@@ -8,6 +8,8 @@ body {
 	font-family	: 'Orbitron', sans-serif;
 	font-size	: 100%;
 }
+
+
 #info .top {
 	position	: absolute;
 	top		: 0px;
@@ -19,7 +21,13 @@ body {
 	color		: white;
 	text-decoration	: none;
 }
-#info a:hover {
+
+a:visited {
+	color		: #aaa;
+}
+
+a:hover {
+	color		: yellow;
 	text-decoration	: underline;
 }
 #info .bottom {
