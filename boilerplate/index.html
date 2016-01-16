@@ -94,8 +94,9 @@
 		// tunnel variables
 		var TUNNEL_BACK = -800.0;
 		var TUNNEL_RADIUS = 25;
-		var TUNNEL_SEGMENT_STEP = 20.0;
+		var TUNNEL_SEGMENT_STEP = 30.0;
 		var tunnelSegments = [];
+		var TUNNEL_VELOCITY = 2.3;
 		var particles = [];
 
 		/////////////////////////////////////////////////////////////////////////////////////////
@@ -393,7 +394,7 @@
 			for(var i = asteroids.length - 1; i >= 0; i--) {
 				var obj = asteroids[i];
 				obj.position.z += astVelocity;
-				if(obj.position.z > 500) {
+				if(obj.position.z > 500){
 					scene.remove(obj);
 					asteroids.splice(i,1);
 					asteroids.push(generateAsteroid({}));
@@ -408,6 +409,10 @@
 						detectCollisions(obj);
 					}
 				}
+			}
+
+			if(helper) {
+				helper.update();
 			}
 
 			// actually render the scene

@@ -6,6 +6,7 @@ function initializeAsteroidGame() {
     var mesh	= new THREE.Mesh( geometry, material );
     mesh.position.set(0, 0, -5);
     scene.add( mesh );
+    scene.add( spaceship );
     camera.lookAt(mesh.position);
     mesh.visible = false;
 
@@ -13,9 +14,7 @@ function initializeAsteroidGame() {
 
     var manager = new THREE.LoadingManager();
     manager.onProgress = function ( item, loaded, total ) {
-
         console.log( item, loaded, total );
-
     };
 
     loadSpaceship(manager);
@@ -133,12 +132,17 @@ function onCollision() {
 function detectCollisions(obj) {
     var pos = obj.position.distanceTo(spaceship.position);
     if(pos < 50) {
-        console.log(pos);
-        if (obj.position.distanceTo(spaceship.position) < obj.geometry.boundingSphere.radius + 15) {
-            onCollision()
+        var compBox = new THREE.Box3().setFromObject(obj);
+        var min = compBox.min;
+        var max = compBox.max;
+        var newBox = new THREE.Box3(new THREE.Vector3(min.x+1, min.y+1, min.z+1), new THREE.Vector3(max.x-1, max.y-1, max.z-1));
+        if (newBox.isIntersectionBox(new THREE.Box3().setFromObject(spaceship))) {
+            onCollision();
         }
     }
 }
+
+var helper;
 
 function loadSpaceship(manager) {
     // instantiate a loader
@@ -156,11 +160,12 @@ function loadSpaceship(manager) {
             // Function when both resources are loaded
             function ( object ) {
                 object.position.set(0, 250, -1000);
-                scene.add( object );
                 spaceship = object;
-                var helper = new THREE.BoundingBoxHelper(object, 0xff0000);
-                helper.update();
-                scene.add(helper);
+
+                spaceship.geometry.applyMatrix( new THREE.Matrix4().makeTranslation(0, 0, -100) );
+                spaceship.geometry.verticesNeedUpdate = true;
+                var axisHelper = new THREE.AxisHelper(100);
+                spaceship.add(axisHelper);
             },
             // Function called when downloads progress
             function ( xhr ) {
