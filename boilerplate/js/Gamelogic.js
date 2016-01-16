@@ -42,7 +42,7 @@ function updateAsteroids() {
             }
         }
         else {
-            if(numFrames % 3 == 0 && spaceship !== undefined) {
+            if(/*numFrames % 3 == 0 && */spaceship !== undefined) {
                 detectCollisions(obj);
             }
         }
