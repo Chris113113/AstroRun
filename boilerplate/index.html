@@ -64,6 +64,7 @@
 		var gameState = GameStateEnum.INIT;
 		var gameTimer = new THREE.Clock(false);
 		var gameLevel = 1;
+		var gameTimerUpdateString = undefined;
 
 		///////////////////////////
 		// RENDER STATE
@@ -170,12 +171,17 @@
 			// allow 'f' to go fullscreen where this feature is supported
 			if( THREEx.FullScreen.available() ){
 				THREEx.FullScreen.bindKey();
-				document.getElementById('inlineDoc').innerHTML	+= "F for fullscreen";
+				document.getElementById('inlineDoc').innerHTML = "F for fullscreen";
 			}
 
+			if(gameplay) {
+				Leap.loop( {background: true}, leapAnimate ).connect();
+			}
 		}
 
 		function clearScene() {
+			asteroids = [];
+
 			for( var i = scene.children.length - 1; i >= 0; i--) {
 				var obj = scene.children[i];
 				scene.remove(obj);
@@ -236,7 +242,6 @@
 			scene.fog = new THREE.FogExp2(0x0, FOG_FALLOFF);
 
 			if(gameplay) {
-				Leap.loop( {background: true}, leapAnimate ).connect();
 				initializeAsteroidGame();
 			}
 
@@ -250,32 +255,48 @@
 			return s;
 		}
 
+		// reset's the game timer and level and stops any playing events
+		function resetGameState() {
+			gameTimer = new THREE.Clock(false);
+			gameLevel = 1;
+			if(gameTimerUpdateString) window.clearInterval(gameTimerUpdateString);
+			document.getElementById('hud-time').innerText = "00:00";
+		}
+
+		// resets any current game state and immediately starts a new game
+		function startNewGame() {
+			resetGameState();
+
+			gameTimer.start();
+
+			// update the play timer
+			gameTimerUpdateString = window.setInterval(function() {
+				var minutes = parseInt(gameTimer.getElapsedTime()/60);
+				var seconds = parseInt(gameTimer.getElapsedTime() % 60);
+				document.getElementById('hud-time').innerText = pad(minutes, 2) + ":" + pad(seconds, 2);
+			}, 500);
+		}
+
+		// stops the current game, but doesnt destroy the game state
+		function stopGame() {
+			gameTimer.stop();
+			window.clearInterval(gameTimerUpdateString);
+		}
+
 		function transitionTo(newGameState) {
 			if(gameState == GameStateEnum.INIT) {
 				if(newGameState != GameStateEnum.MENU) {
 					throw new Error("Invalid state transition");
 				}
 
+				resetGameState();
 				sceneMainMenu();
-				document.getElementById('title-menu').style.display = "block";
 			} else if(gameState == GameStateEnum.MENU) {
-				document.getElementById('title-menu').style.display = "none";
 
 				if(newGameState == GameStateEnum.CREDITS) {
-					document.getElementById('credits-menu').style.display = "block";
 				} else if (newGameState == GameStateEnum.PLAYING) {
-					document.getElementById('game-hud').style.display = "inline-block";
-
-					gameTimer.start();
-
-					gameTimerUpdateString = window.setInterval(function() {
-
-						var minutes = parseInt(gameTimer.getElapsedTime()/60);
-						var seconds = parseInt(gameTimer.getElapsedTime() % 60);
-						document.getElementById('hud-time').innerText = pad(minutes, 2) + ":" + pad(seconds, 2);
-					}, 500);
+					startNewGame();
 					scenePlaying();
-					console.log("STATE: playing")
 				} else {
 					throw new Error("Invalid state transition");
 				}
@@ -283,42 +304,66 @@
 				if(newGameState != GameStateEnum.MENU) {
 					throw new Error("Invalid state transition");
 				}
-
-				document.getElementById('credits-menu').style.display = "none";
-				document.getElementById('title-menu').style.display = "block";
-
-				console.log("STATE: menu")
 			} else if(gameState == GameStateEnum.PLAYING) {
 				if(newGameState != GameStateEnum.DEAD) {
 					throw new Error("Invalid state transition");
 				}
 
-				gameTimer.stop();
-				window.clearInterval(gameTimerUpdateString);
-
-				document.getElementById('game-hud').style.display = "none";
-				document.getElementById('game-hud-dead').style.display = "block";
-
-				console.log("STATE: DEAD")
+				stopGame();
             } else if(gameState == GameStateEnum.DEAD) {
-				gameTimer = new THREE.Clock(false);
-				gameLevel = 1;
 
 				if(newGameState == GameStateEnum.MENU) {
-					document.getElementById('title-menu').style.display = "block";
 					sceneMainMenu();
 				} else if(newGameState == GameStateEnum.PLAYING) {
-					document.getElementById('game-hud').style.display = "inline-block";
+					startNewGame();
+					scenePlaying();
 				} else {
 					throw new Error("Invalid state transition");
 				}
-
-				document.getElementById('game-hud-dead').style.display = "none";
             } else {
 				throw new Error("Invalid state");
 			}
 
 			gameState = newGameState;
+
+			drawMenu();
+		}
+
+		function drawMenu() {
+			var hudDead = document.getElementById('game-hud-dead');
+			var hud = document.getElementById('game-hud');
+			var credits = document.getElementById('credits-menu');
+			var title = document.getElementById('title-menu');
+			var fullscreenText = document.getElementById('inlineDoc');
+
+			// turn everything off
+
+			var all = [hudDead, hud, credits, title, fullscreenText];
+			all.forEach(function(item){item.style.display = "none"});
+
+
+			if(gameState == GameStateEnum.INIT) {
+			} else if(gameState == GameStateEnum.MENU) {
+				title.style.display = "block";
+				fullscreenText.style.display = "block";
+
+				console.log("MENU: " + "MAIN")
+			} else if(gameState == GameStateEnum.CREDITS) {
+				credits.style.display = "block";
+
+				console.log("MENU: " + "CREDITS")
+            } else if(gameState == GameStateEnum.PLAYING) {
+				hud.style.display = "inline-block";
+
+				console.log("MENU: " + "PLAYING")
+            } else if(gameState == GameStateEnum.DEAD) {
+				hudDead.style.display = "block";
+				hud.style.display = "inline-block";
+
+				console.log("MENU: " + "DEAD")
+            } else {
+				throw new Error("Invalid state");
+			}
 		}
 
 		// animation loop

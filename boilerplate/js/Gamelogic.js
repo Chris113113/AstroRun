@@ -81,6 +81,8 @@ function updateMesh( bone, mesh ) {
 }
 
 function leapAnimate( frame ) {
+    if(gameState != GameStateEnum.PLAYING)
+      return;
 
     var countBones = 0;
     var countArms = 0;
