@@ -123,12 +123,17 @@ function generateAsteroid(mesh) {
     return sphere;
 }
 
+function onCollision() {
+    console.log('Collision!');
+    transitionTo(GameStateEnum.DEAD);
+}
+
 function detectCollisions(obj) {
     var pos = obj.position.distanceTo(spaceship.position);
     if(pos < 50) {
         console.log(pos);
         if (obj.position.distanceTo(spaceship.position) < obj.geometry.boundingSphere.radius + 15) {
-            console.log('Collision!');
+            onCollision()
         }
     }
 }

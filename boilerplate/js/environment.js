@@ -1,6 +1,6 @@
 function updateTunnel() {
     tunnelSegments.forEach(function (item) {
-        item[0].position.z += 0.30;
+        item[0].position.z += 1.30;
 
         if(item[0].position.z >= 0.0) {
             item[0].position.z = TUNNEL_BACK;

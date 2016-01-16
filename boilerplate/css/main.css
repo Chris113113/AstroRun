@@ -82,3 +82,22 @@ body {
 	font-weight: bold;
 	text-align: right;
 }
+
+#menu #game-hud-dead {
+	display: none;
+	position: absolute;
+	width: 100%;
+}
+
+#menu #game-hud-dead h1 {
+	margin-top: 10%;
+	margin-bottom: 17%;
+	font-weight: 700;
+	font-size: 4em;
+	text-align: center;
+	color: red;
+}
+
+#menu #game-hud-dead h2 {
+	text-align: center;
+}

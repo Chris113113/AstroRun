@@ -43,6 +43,11 @@
 				<p id="hud-level">Level 1</p>
 				<p id="hud-time">00:05</p>
 			</div>
+			<div id="game-hud-dead">
+				<h1>YOU DIED</h1>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)">Retry</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)">Give up</h2>
+			</div>
 		</div>
 
 	</div>
@@ -57,6 +62,8 @@
 
 		// start in the init state
 		var gameState = GameStateEnum.INIT;
+		var gameTimer = new THREE.Clock(false);
+		var gameLevel = 1;
 
 		///////////////////////////
 		// RENDER STATE
@@ -193,6 +200,10 @@
 				cameraControls.rangeX = -5;
 				cameraControls.rangeY = 5;
 			}
+
+			// transparently support window resize
+			THREEx.WindowResize.bind(renderer, camera);
+
 			// draw fog
 			scene.fog = new THREE.FogExp2(0x0, FOG_FALLOFF);
 
@@ -218,6 +229,9 @@
 				cameraControls.rangeY = 5;
 			}
 
+			// transparently support window resize
+			THREEx.WindowResize.bind(renderer, camera);
+
 			// draw fog
 			scene.fog = new THREE.FogExp2(0x0, FOG_FALLOFF);
 
@@ -228,6 +242,12 @@
 
 			makeTunnel();
 			makeParticles();
+		}
+
+		function pad(num, size) {
+			var s = num+"";
+			while (s.length < size) s = "0" + s;
+			return s;
 		}
 
 		function transitionTo(newGameState) {
@@ -246,6 +266,14 @@
 				} else if (newGameState == GameStateEnum.PLAYING) {
 					document.getElementById('game-hud').style.display = "inline-block";
 
+					gameTimer.start();
+
+					gameTimerUpdateString = window.setInterval(function() {
+
+						var minutes = parseInt(gameTimer.getElapsedTime()/60);
+						var seconds = parseInt(gameTimer.getElapsedTime() % 60);
+						document.getElementById('hud-time').innerText = pad(minutes, 2) + ":" + pad(seconds, 2);
+					}, 500);
 					scenePlaying();
 					console.log("STATE: playing")
 				} else {
@@ -265,15 +293,27 @@
 					throw new Error("Invalid state transition");
 				}
 
+				gameTimer.stop();
+				window.clearInterval(gameTimerUpdateString);
+
+				document.getElementById('game-hud').style.display = "none";
+				document.getElementById('game-hud-dead').style.display = "block";
+
 				console.log("STATE: DEAD")
             } else if(gameState == GameStateEnum.DEAD) {
+				gameTimer = new THREE.Clock(false);
+				gameLevel = 1;
+
 				if(newGameState == GameStateEnum.MENU) {
-
+					document.getElementById('title-menu').style.display = "block";
+					sceneMainMenu();
 				} else if(newGameState == GameStateEnum.PLAYING) {
-
+					document.getElementById('game-hud').style.display = "inline-block";
 				} else {
 					throw new Error("Invalid state transition");
 				}
+
+				document.getElementById('game-hud-dead').style.display = "none";
             } else {
 				throw new Error("Invalid state");
 			}
