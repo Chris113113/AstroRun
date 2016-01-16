@@ -101,6 +101,8 @@
 		var TUNNEL_BACK = -800.0;
 		var TUNNEL_RADIUS = 25;
 		var TUNNEL_SEGMENT_STEP = 30.0;
+		var currColorPointer = 0;
+		var levelColorArray = [0x0000FF, 0xFF0000, 0x33FF00, 0xFFFFFF, 0xFF00CC];
 		var tunnelSegments = [];
 		var TUNNEL_VELOCITY = 2.3;
 		var particles = [];
@@ -282,13 +284,20 @@
 		// resets any current game state and immediately starts a new game
 		function startNewGame() {
 			resetGameState();
-
+			var nextLevelTime = 15;
 			gameTimer.start();
 
 			// update the play timer
 			gameTimerUpdateString = window.setInterval(function() {
 				var minutes = parseInt(gameTimer.getElapsedTime()/60);
 				var seconds = parseInt(gameTimer.getElapsedTime() % 60);
+				if(seconds >= nextLevelTime){
+					currColorPointer += 1;
+					nextLevelTime += 15;
+					if(nextLevelTime == 60){
+						nextLevelTime = 0;
+					}
+				}
 				document.getElementById('hud-time').innerText = pad(minutes, 2) + ":" + pad(seconds, 2);
 			}, 500);
 

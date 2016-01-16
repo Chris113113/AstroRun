@@ -1,10 +1,14 @@
 function updateTunnel() {
-    tunnelSegments.forEach(function (item) {
-        item[0].position.z += TUNNEL_VELOCITY;
 
+    tunnelSegments.forEach(function (item) {
+
+        item[0].position.z += TUNNEL_VELOCITY;
+        item[1].material.color = new THREE.Color(levelColorArray[currColorPointer % 5]);
         if(item[0].position.z >= 0.0) {
             item[0].position.z = TUNNEL_BACK;
+
         }
+
     });
 }
 
