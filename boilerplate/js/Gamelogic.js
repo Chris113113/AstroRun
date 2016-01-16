@@ -1,3 +1,5 @@
+
+
 function initializeAsteroidGame() {
     var geometry	= new THREE.TorusGeometry( 1, 0.42 );
     var material	= new THREE.MeshNormalMaterial();
@@ -18,7 +20,7 @@ function initializeAsteroidGame() {
 
     loadSpaceship(manager);
 
-    for(var i = 0; i < 3; i++) {
+    for(var i = 0; i < 10; i++) {
         setTimeout(function () {
             asteroids.push(generateAsteroid({}));
         }, i * 600);
@@ -40,17 +42,40 @@ function addMesh( meshes ) {
 
 function updateMesh( bone, mesh ) {
     var centerBone = bone.center();
-    //console.log(centerBone);
     // normalize the bone about the center axis
 
     var posX = centerBone[0];
     var posY = centerBone[1]-250;
-    var posZ = Math.max(centerBone[2] - 250.0, -100.0);
+    var posZ = Math.min(-25, Math.max(centerBone[2] - 250.0, -100.0));
 
-    mesh.position.set(posX, posY, posZ);
-    mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( bone.matrix() ) );
+    var r = Math.sqrt(posX*posX + posY*posY);
+    var theta = Math.atan(posY/posX);
+
+
+    if(r <= TUNNEL_RADIUS + 10) {
+        mesh.position.set(posX, posY, posZ);
+    }
+    else {
+        r = TUNNEL_RADIUS;
+        if(posX > 0) {
+            mesh.position.x = r * Math.cos(theta);
+            mesh.position.y = r * Math.sin(theta);
+        }
+        else {
+            mesh.position.x = -r * Math.cos(theta);
+            mesh.position.y = -r * Math.sin(theta);
+        }
+        mesh.position.z = posZ;
+    }
+    //mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( bone.matrix() ) );
+    //mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [-Math.PI/2,-Math.PI/2,Math.PI/2,'XYZ'] ) );
+    mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [Math.PI,Math.PI*11/6,0,'XYZ'] ) );
     mesh.quaternion.multiply( baseBoneRotation );
-    mesh.scale.set( .15, .15, .15 );
+    mesh.scale.set( .025, .025, .025 );
+
+    camera.position.setX(mesh.position.x / 4);
+    camera.position.setY(mesh.position.y / 4);
+    camera.lookAt(new THREE.Vector3(0,0,-100));
 
     scene.add( mesh );
 }
@@ -81,13 +106,31 @@ function leapAnimate( frame ) {
 }
 
 function generateAsteroid(mesh) {
-    var geometry = new THREE.SphereGeometry( Math.random() * 100 );
+    var radius = Math.random() * 3 + 1;
+    var geometry = new THREE.SphereGeometry( radius );
     var material = new THREE.MeshNormalMaterial();
-    mesh = new THREE.Mesh( geometry, material );
+    var sphere = new THREE.Mesh( geometry, material );
 
-    mesh.position.set(Math.random() * 1500 - 750, Math.random() * 1500 - 750, -5000);
-    scene.add(mesh);
-    return mesh;
+    // polar coordinates to determine the spawn area of the particles
+    var r = Math.random()*20;
+    var theta = Math.random()*Math.PI*2;
+
+    // give it a random x and y position between -500 and 500
+    sphere.position.setX(r * Math.cos(theta));
+    sphere.position.setY(r * Math.sin(theta));
+    sphere.position.setZ(-5000);
+    scene.add(sphere);
+    return sphere;
+}
+
+function detectCollisions(obj) {
+    var pos = obj.position.distanceTo(spaceship.position);
+    if(pos < 50) {
+        console.log(pos);
+        if (obj.position.distanceTo(spaceship.position) < obj.geometry.boundingSphere.radius + 15) {
+            console.log('Collision!');
+        }
+    }
 }
 
 function loadSpaceship(manager) {
@@ -98,14 +141,19 @@ function loadSpaceship(manager) {
         // load an obj / mtl resource pair
         loader.load(
             // OBJ resource URL
-            'models/interceptor/alien_interceptor_flying.obj',
-            // MTL resource URL
-            'models/interceptor/alien_interceptor_flying.mtl',
+            //'models/interceptor/alien_interceptor_flying.obj',
+            //// MTL resource URL
+            //'models/interceptor/alien_interceptor_flying.mtl',
+            'models/stuntglyder/stunt_glyder.obj',
+            'models/stuntglyder/stunt_glyder.mtl',
             // Function when both resources are loaded
             function ( object ) {
                 object.position.set(0, 250, -1000);
                 scene.add( object );
                 spaceship = object;
+                var helper = new THREE.BoundingBoxHelper(object, 0xff0000);
+                helper.update();
+                scene.add(helper);
             },
             // Function called when downloads progress
             function ( xhr ) {
@@ -119,4 +167,5 @@ function loadSpaceship(manager) {
     } else {
         spaceship = new THREE.Mesh(new THREE.SphereGeometry(5), new THREE.MeshNormalMaterial());
     }
+
 }

@@ -25,6 +25,7 @@
 		<link  href="css/main.css" rel="stylesheet"/>
 	</head>
 <body>
+
 	<!-- three.js container -->
     <div id="container">
 		<div id="menu">
@@ -68,13 +69,13 @@
 		var boneMeshes = [];
 		var meshes = [];
 
-		var	asteroids = [], astVelocity = 50, spaceship = {};
+		var	asteroids = [], astVelocity = 25, spaceship = undefined;
 
 		///////////////////////////
 		// SETTINGS
 		///////////////////////////
 		var rangeLimited = true;
-		var loadAssets = false; // load expensive assets and show the progress bar
+		var loadAssets = true; // load expensive assets and show the progress bar
 		var gameplay = true; // enabled if the game is going to be played
 
 		///////////////////////////
@@ -84,7 +85,7 @@
 
 		// tunnel variables
 		var TUNNEL_BACK = -800.0;
-		var TUNNEL_RADIUS = 10;
+		var TUNNEL_RADIUS = 25;
 		var TUNNEL_SEGMENT_STEP = 20.0;
 		var tunnelSegments = [];
 		var particles = [];
@@ -299,6 +300,8 @@
 			stats.update();
 		}
 
+		var numFrames = 0;
+
 		// render the scene
 		function render() {
 
@@ -312,8 +315,12 @@
 					if(Math.random() > .95) {
 						setTimeout(function() {
 							asteroids.push(generateAsteroid({}));
-							console.log(asteroids[i]);
 						}, Math.random()*600+200);
+					}
+				}
+				else {
+					if(numFrames % 3 == 0 && spaceship !== undefined) {
+						detectCollisions(obj);
 					}
 				}
 			}
@@ -326,4 +333,6 @@
 
 	</script>
 </body>
+
+
 </html>
