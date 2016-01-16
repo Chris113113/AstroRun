@@ -26,6 +26,8 @@
 	</head>
 <body>
 
+	<audio src="sounds/house-bgm.mp3" loop autoplay></audio>
+
 	<!-- three.js container -->
     <div id="container">
 		<div id="menu">
@@ -61,6 +63,9 @@
 	<script type="text/javascript">
 		var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4});
 
+		var explosionSound = new Audio("sounds/Explosion.mp3");
+		var hitSound = new Audio("sounds/Hit.mp3");
+
 		// start in the init state
 		var gameState = GameStateEnum.INIT;
 		var gameTimer = new THREE.Clock(false);
@@ -79,7 +84,6 @@
 		var boneMeshes = [];
 		var meshes = [];
 
-		var	asteroids = [], astVelocity = 25, spaceship = undefined;
 
 		///////////////////////////
 		// SETTINGS
@@ -100,6 +104,13 @@
 		var tunnelSegments = [];
 		var TUNNEL_VELOCITY = 2.3;
 		var particles = [];
+
+		// asteroidVariables
+		var	asteroids = [];
+		var astVelocity = 25;
+		var spaceship = undefined;
+		var MAX_ASTEROIDS = 100;
+
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -288,9 +299,31 @@
 			gameLives -= 1;
 			drawHealthBar();
 
+
+
 			if(gameLives <= 0) {
+				scene.remove( spaceship );
 				transitionTo(GameStateEnum.DEAD)
 			}
+			else if (GameStateEnum.PLAYING) {
+				hitSound.play();
+				blinkShip();
+			}
+		}
+
+		function blinkShip() {
+			spaceship.canCollide = false;
+			scene.remove(spaceship);
+			setTimeout(function() {
+				scene.add(spaceship);
+				setTimeout(function() {
+					scene.remove(spaceship);
+					setTimeout(function() {
+						scene.add(spaceship);
+						spaceship.canCollide = true;
+					}, 250);
+				}, 250);
+			}, 250);
 		}
 
 
@@ -339,6 +372,7 @@
 					throw new Error("Invalid state transition");
 				}
 
+				explosionSound.play();
 				stopGame();
             } else if(gameState == GameStateEnum.DEAD) {
 
@@ -408,6 +442,10 @@
 			updateTunnel();
 			updateParticles();
 
+			// animate others
+			updateTailRings();
+			updateAsteroids();
+
 			// do the render
 			render();
 
@@ -419,30 +457,6 @@
 
 		// render the scene
 		function render() {
-
-			for(var i = asteroids.length - 1; i >= 0; i--) {
-				var obj = asteroids[i];
-				obj.position.z += astVelocity;
-				if(obj.position.z > 500){
-					scene.remove(obj);
-					asteroids.splice(i,1);
-					asteroids.push(generateAsteroid({}));
-					if(Math.random() > .95) {
-						setTimeout(function() {
-							asteroids.push(generateAsteroid({}));
-						}, Math.random()*600+200);
-					}
-				}
-				else {
-					if(numFrames % 3 == 0 && spaceship !== undefined) {
-						detectCollisions(obj);
-					}
-				}
-			}
-
-			if(helper) {
-				helper.update();
-			}
 
 			// actually render the scene
 			renderer.render( scene, camera );

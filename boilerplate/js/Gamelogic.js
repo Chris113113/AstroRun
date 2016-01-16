@@ -27,6 +27,28 @@ function initializeAsteroidGame() {
 
 }
 
+function updateAsteroids() {
+    for(var i = asteroids.length - 1; i >= 0; i--) {
+        var obj = asteroids[i];
+        obj.position.z += astVelocity;
+        if(obj.position.z > 500){
+            scene.remove(obj);
+            asteroids.splice(i,1);
+            asteroids.push(generateAsteroid({}));
+            if(Math.random() > .95 && asteroids.length < MAX_ASTEROIDS) {
+                setTimeout(function() {
+                    asteroids.push(generateAsteroid({}));
+                }, Math.random()*600+200);
+            }
+        }
+        else {
+            if(numFrames % 3 == 0 && spaceship !== undefined) {
+                detectCollisions(obj);
+            }
+        }
+    }
+}
+
 
 function addMesh( meshes ) {
 
@@ -39,12 +61,12 @@ function addMesh( meshes ) {
 
 }
 
-function updateMesh( bone, mesh ) {
+function updateMesh( bone ) {
     var centerBone = bone.center();
     // normalize the bone about the center axis
 
     var posX = centerBone[0];
-    var posY = centerBone[1]-250;
+    var posY = centerBone[1]-150;
     var posZ = Math.min(-25, Math.max(centerBone[2] - 250.0, -100.0));
 
     var r = Math.sqrt(posX*posX + posY*posY);
@@ -52,31 +74,32 @@ function updateMesh( bone, mesh ) {
 
 
     if(r <= TUNNEL_RADIUS + 10) {
-        mesh.position.set(posX, posY, posZ);
+        spaceship.position.set(posX, posY, posZ);
     }
     else {
         r = TUNNEL_RADIUS;
         if(posX > 0) {
-            mesh.position.x = r * Math.cos(theta);
-            mesh.position.y = r * Math.sin(theta);
+            spaceship.position.setX(r * Math.cos(theta));
+            spaceship.position.setY(r * Math.sin(theta));
         }
         else {
-            mesh.position.x = -r * Math.cos(theta);
-            mesh.position.y = -r * Math.sin(theta);
+            spaceship.position.setX(-r * Math.cos(theta));
+            spaceship.position.setY(-r * Math.sin(theta));
         }
-        mesh.position.z = posZ;
+        spaceship.position.setZ(posZ);
     }
     //mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( bone.matrix() ) );
     //mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [-Math.PI/2,-Math.PI/2,Math.PI/2,'XYZ'] ) );
-    mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [Math.PI,Math.PI*11/6,0,'XYZ'] ) );
-    mesh.quaternion.multiply( baseBoneRotation );
-    mesh.scale.set( .025, .025, .025 );
+    spaceship.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [Math.PI,Math.PI*11/6,0,'XYZ'] ) );
+    spaceship.quaternion.multiply( baseBoneRotation );
+    spaceship.scale.set( .025, .025, .025 );
 
-    camera.position.setX(mesh.position.x / 4);
-    camera.position.setY(mesh.position.y / 4);
+    camera.position.setX(spaceship.position.x / 4);
+    camera.position.setY(spaceship.position.y / 4);
     camera.lookAt(new THREE.Vector3(0,0,-100));
 
-    scene.add( mesh );
+    addTailRing();
+
 }
 
 function leapAnimate( frame ) {
@@ -137,6 +160,9 @@ function generateAsteroid(mesh) {
 }
 
 function detectCollisions(obj) {
+    if(!spaceship.canCollide) {
+        return;
+    }
     var pos = obj.position.distanceTo(spaceship.position);
     if(pos < 50) {
         var compBox = new THREE.Box3().setFromObject(obj);
@@ -149,7 +175,41 @@ function detectCollisions(obj) {
     }
 }
 
-var helper;
+var tailRings = [];
+
+function addTailRing() {
+    var material = new THREE.MeshNormalMaterial();
+    var radius = 0.75;
+    var segments = 26;
+
+    var circleGeometry = new THREE.CircleGeometry(radius, segments);
+    var circle = new THREE.Mesh(circleGeometry, material);
+
+    //circle.position.z = step;
+    circle.visible = false;
+    var edgesCircle = new THREE.EdgesHelper(circle, 0xAD42C7);
+    circle.position.setX(spaceship.position.x);
+    circle.position.setY(spaceship.position.y - 5);
+    circle.position.setZ(spaceship.position.z);
+
+    scene.add(circle);
+    scene.add(edgesCircle);
+
+    tailRings.push([circle, edgesCircle]);
+}
+
+function updateTailRings() {
+    for (var i = tailRings.length-1; i >= 0; i--) {
+        var item = tailRings[i];
+        item[0].position.z += TUNNEL_VELOCITY;
+
+        if(item[0].position.z >= 0.0) {
+            scene.remove(item[0]);
+            scene.remove(item[1]);
+            tailRings.splice(i, 1);
+        }
+    }
+}
 
 function loadSpaceship(manager) {
     // instantiate a loader
@@ -168,6 +228,8 @@ function loadSpaceship(manager) {
             function ( object ) {
                 object.position.set(0, 250, -1000);
                 spaceship = object;
+                spaceship.canCollide = true;
+                scene.add( spaceship );
             },
             // Function called when downloads progress
             function ( xhr ) {
