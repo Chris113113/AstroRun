@@ -42,8 +42,8 @@
 				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 			</div>
 			<div id="game-hud">
-				<p id="hud-level">Level 1</p>
-				<p id="hud-time">00:05</p>
+				<p id="hud-level"></p>
+				<p id="hud-time"></p>
 				<div id="health-bar"></div>
 			</div>
 			<div id="game-hud-dead">
@@ -277,9 +277,14 @@
 			gameTimer = new THREE.Clock(false);
 			gameLevel = 1;
 			gameLives = 3;
+			currColorPointer = 0;
 
 			if(gameTimerUpdateString) window.clearInterval(gameTimerUpdateString);
 			document.getElementById('hud-time').innerText = "00:00";
+		}
+
+		function drawLevel() {
+			document.getElementById('hud-level').innerText = "Level " + gameLevel;
 		}
 
 		// resets any current game state and immediately starts a new game
@@ -292,24 +297,26 @@
 			gameTimerUpdateString = window.setInterval(function() {
 				var minutes = parseInt(gameTimer.getElapsedTime()/60);
 				var seconds = parseInt(gameTimer.getElapsedTime() % 60);
-				if(seconds >= nextLevelTime){
-					currColorPointer += 1;
+				var totalSeconds = parseInt(gameTimer.getElapsedTime());
+
+				if(totalSeconds >= nextLevelTime){
+					currColorPointer = (currColorPointer+1) % levelColorArray.length;
 					nextLevelTime += 15;
-					if(nextLevelTime == 60){
-						nextLevelTime = 0;
-					}
+
+					gameLevel += 1;
+					drawLevel();
 				}
 				document.getElementById('hud-time').innerText = pad(minutes, 2) + ":" + pad(seconds, 2);
 			}, 500);
 
 			drawHealthBar();
+			drawLevel();
 		}
 
 		function playerHit() {
 			gameLives -= 1;
+
 			drawHealthBar();
-
-
 
 			if(gameLives <= 0) {
 				scene.remove( spaceship );
