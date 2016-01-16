@@ -2,7 +2,7 @@ function initializeAsteroidGame() {
     var geometry	= new THREE.TorusGeometry( 1, 0.42 );
     var material	= new THREE.MeshNormalMaterial();
     var mesh	= new THREE.Mesh( geometry, material );
-    mesh.position.set(0, 250, -250);
+    mesh.position.set(0, 0, -5);
     scene.add( mesh );
     camera.lookAt(mesh.position);
     mesh.visible = false;
@@ -39,8 +39,15 @@ function addMesh( meshes ) {
 }
 
 function updateMesh( bone, mesh ) {
+    var centerBone = bone.center();
+    //console.log(centerBone);
+    // normalize the bone about the center axis
 
-    mesh.position.fromArray( bone.center() );
+    var posX = centerBone[0];
+    var posY = centerBone[1]-250;
+    var posZ = Math.max(centerBone[2] - 250.0, -100.0);
+
+    mesh.position.set(posX, posY, posZ);
     mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( bone.matrix() ) );
     mesh.quaternion.multiply( baseBoneRotation );
     mesh.scale.set( .15, .15, .15 );
@@ -88,25 +95,29 @@ function loadSpaceship(manager) {
     // instantiate a loader
     var loader = new THREE.OBJMTLLoader(manager);
 
-    // load an obj / mtl resource pair
-    loader.load(
-        // OBJ resource URL
-        'models/interceptor/alien_interceptor_flying.obj',
-        // MTL resource URL
-        'models/interceptor/alien_interceptor_flying.mtl',
-        // Function when both resources are loaded
-        function ( object ) {
-            object.position.set(0, 250, -1000);
-            scene.add( object );
-            spaceship = object;
-        },
-        // Function called when downloads progress
-        function ( xhr ) {
-            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-        },
-        // Function called when downloads error
-        function ( xhr ) {
-            console.log( 'An error happened' );
-        }
-    );
+    if(loadAssets) {
+        // load an obj / mtl resource pair
+        loader.load(
+            // OBJ resource URL
+            'models/interceptor/alien_interceptor_flying.obj',
+            // MTL resource URL
+            'models/interceptor/alien_interceptor_flying.mtl',
+            // Function when both resources are loaded
+            function ( object ) {
+                object.position.set(0, 250, -1000);
+                scene.add( object );
+                spaceship = object;
+            },
+            // Function called when downloads progress
+            function ( xhr ) {
+                console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+            },
+            // Function called when downloads error
+            function ( xhr ) {
+                console.log( 'An error happened' );
+            }
+        );
+    } else {
+        spaceship = new THREE.Mesh(new THREE.SphereGeometry(5), new THREE.MeshNormalMaterial());
+    }
 }

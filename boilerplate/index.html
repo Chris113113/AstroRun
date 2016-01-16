@@ -30,16 +30,17 @@
     	<div id="container"></div>
 	<!-- info on screen display -->
 	<div id="info">
-		<div class="top">
+		<!--<div class="top">
 			<a href="http://learningthreejs.com/blog/2011/12/20/boilerplate-for-three-js/" target="_blank">LearningThree.js</a>
 			boiler plate for
 			<a href="https://github.com/mrdoob/three.js/" target="_blank">three.js</a>
-		</div>
+		</div>-->
 		<div class="bottom" id="inlineDoc" >
 			- <i>p</i> for screenshot
 		</div>
 	</div>
 
+	<script type="text/javascript" src="js/environment.js"></script>
 	<script type="text/javascript">
 		var stats, scene, renderer;
 		var camera, cameraControl;
@@ -49,8 +50,26 @@
 		var boneMeshes = [];
 		var meshes = [];
 
+		var loadAssets = false;
 		var gameplay = true,
 				asteroids = [], astVelocity = 50, spaceship = {};
+
+		///////////////////////////
+		// SETTINGS
+		///////////////////////////
+		var rangeLimited = true;
+
+		///////////////////////////
+		// ENVIRONMENT VARIABLES
+		///////////////////////////
+		var FOG_FALLOFF = 0.003;
+
+		// tunnel variables
+		var TUNNEL_BACK = -800.0;
+		var TUNNEL_RADIUS = 10;
+		var TUNNEL_SEGMENT_STEP = 20.0;
+		var tunnelSegments = [];
+		var particles = [];
 
 		if( !init() )	animate();
 
@@ -85,11 +104,19 @@
 
 			// put a camera in the scene
 			camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000 );
-			camera.position.set(0, 300, 200);
+			camera.position.set(0, 0, 5);
 			scene.add(camera);
 
 			var light = new THREE.AmbientLight( 0xBBBBBB ); // soft white light
 			scene.add( light );
+			// create a camera contol
+			cameraControls	= new THREEx.DragPanControls(camera);
+
+			// allow debugging with the camera
+			if(rangeLimited) {
+				cameraControls.rangeX = -5;
+				cameraControls.rangeY = 5;
+			}
 
 			// transparently support window resize
 			THREEx.WindowResize.bind(renderer, camera);
@@ -101,15 +128,19 @@
 				document.getElementById('inlineDoc').innerHTML	+= "- <i>f</i> for fullscreen";
 			}
 
-			// here you add your objects
-			// - you will most likely replace this part by your own
-
+			// draw fog
+			scene.fog = new THREE.FogExp2(0x0, FOG_FALLOFF);
 
 			if(gameplay) {
 				Leap.loop( {background: true}, leapAnimate ).connect();
 				initializeAsteroidGame();
 			}
 
+			////////////////////////////////////////
+			// make objects
+
+			makeParticles();
+			makeTunnel();
 		}
 
 		// animation loop
@@ -119,6 +150,10 @@
 			// - it has to be at the begining of the function
 			// - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 			requestAnimationFrame(animate);
+
+			// animate the tunnel
+			updateTunnel();
+			updateParticles();
 
 			// do the render
 			render();
