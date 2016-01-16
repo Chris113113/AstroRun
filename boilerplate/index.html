@@ -16,6 +16,11 @@
 		<script src="vendor/threex/THREEx.WindowResize.js"></script>
 		<script src="vendor/threex.dragpancontrols.js"></script>
 		<script src=//js.leapmotion.com/leap-0.6.4.js ></script>
+		<script src="js/OBJMTLLoader.js"></script>
+		<script src="js/OBJLoader.js"></script>
+		<script src="js/MTLLoader.js"></script>
+		<script src="js/Gamelogic.js"></script>
+
 
 
 		<link  href="css/main.css" rel="stylesheet"/>
@@ -32,8 +37,8 @@
 		</div>
 		<div class="bottom" id="inlineDoc" >
 			- <i>p</i> for screenshot
-		</div> 
-	</div> 
+		</div>
+	</div>
 
 	<script type="text/javascript">
 		var stats, scene, renderer;
@@ -44,14 +49,13 @@
 		var boneMeshes = [];
 		var meshes = [];
 
-		var asteroids = [];
-		var astVelocity = 50;
+		var gameplay = true,
+				asteroids = [], astVelocity = 50, spaceship = {};
 
 		if( !init() )	animate();
 
 		// init the scene
 		function init(){
-			Leap.loop( {background: true}, leapAnimate ).connect();
 
 			if( Detector.webgl ){
 				renderer = new THREE.WebGLRenderer({
@@ -59,7 +63,7 @@
 					preserveDrawingBuffer	: true	// to allow screenshot
 				});
 
-				renderer.setClearColor(0xBBBBBB, 1);
+				renderer.setClearColor(0x000000, 1);
 			// uncomment if webgl is required
 			//}else{
 			//	Detector.addGetWebGLMessage();
@@ -84,6 +88,9 @@
 			camera.position.set(0, 300, 200);
 			scene.add(camera);
 
+			var light = new THREE.AmbientLight( 0xBBBBBB ); // soft white light
+			scene.add( light );
+
 			// transparently support window resize
 			THREEx.WindowResize.bind(renderer, camera);
 			// allow 'p' to make screenshot
@@ -96,16 +103,11 @@
 
 			// here you add your objects
 			// - you will most likely replace this part by your own
-			var geometry	= new THREE.TorusGeometry( 1, 0.42 );
-			var material	= new THREE.MeshNormalMaterial();
-			var mesh	= new THREE.Mesh( geometry, material );
-			mesh.position.set(0, 250, -250);
-			scene.add( mesh );
-			camera.lookAt(mesh.position);
-			camera.rotation.z = 0;
 
-			for(var i = 0; i < 10; i++) {
-				generateAsteroid();
+
+			if(gameplay) {
+				Leap.loop( {background: true}, leapAnimate ).connect();
+				initializeAsteroidGame();
 			}
 
 		}
@@ -116,7 +118,7 @@
 			// loop on request animation loop
 			// - it has to be at the begining of the function
 			// - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-			requestAnimationFrame( animate );
+			requestAnimationFrame(animate);
 
 			// do the render
 			render();
@@ -125,83 +127,31 @@
 			stats.update();
 		}
 
-		function generateAsteroid() {
-			var geometry = new THREE.SphereGeometry( Math.random() * 100 );
-			var material = new THREE.MeshNormalMaterial();
-			var mesh = new THREE.Mesh( geometry, material );
-
-			mesh.position.set(Math.random() * 500 - 250, Math.random() * 500 - 250, -5000);
-			asteroids.push(mesh);
-			scene.add(mesh);
-		}
-
 		// render the scene
 		function render() {
 
-			asteroids.forEach(function(obj) {
+			for(var i = asteroids.length - 1; i >= 0; i--) {
+				var obj = asteroids[i];
 				obj.position.z += astVelocity;
-			});
+				if(obj.position.z > 500) {
+					scene.remove(obj);
+					asteroids.splice(i,1);
+					asteroids.push(generateAsteroid({}));
+					if(Math.random() > .95) {
+						setTimeout(function() {
+							asteroids.push(generateAsteroid({}));
+							console.log(asteroids[i]);
+						}, Math.random()*600+200);
+					}
+				}
+			}
 
 			// actually render the scene
 			renderer.render( scene, camera );
 		}
 
-		function addMesh( meshes ) {
 
-			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-			var material = new THREE.MeshNormalMaterial();
-			var mesh = new THREE.Mesh( geometry, material );
-			meshes.push( mesh );
 
-			return mesh;
-
-		}
-
-		function updateMesh( bone, mesh ) {
-
-			mesh.position.fromArray( bone.center() );
-			mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( bone.matrix() ) );
-			mesh.quaternion.multiply( baseBoneRotation );
-			mesh.scale.set( bone.width, bone.width, bone.length );
-
-			scene.add( mesh );
-
-		}
-
-		function leapAnimate( frame ) {
-
-			var countBones = 0;
-			var countArms = 0;
-
-			armMeshes.forEach(function (item) {
-				scene.remove(item)
-			});
-			boneMeshes.forEach(function (item) {
-				scene.remove(item)
-			});
-
-			for (var hand of frame.hands) {
-
-				for (var finger of hand.fingers) {
-
-					for (var bone of finger.bones) {
-
-						if (countBones++ === 0) {
-							continue;
-						}
-
-						var boneMesh = boneMeshes [countBones] || addMesh(boneMeshes);
-						updateMesh(bone, boneMesh);
-
-					}
-
-				}
-
-			}
-
-			renderer.render( scene, camera );
-			stats.update();
-		}
 	</script>
 </body>
 </html>

@@ -1,0 +1,229 @@
+newmtl default
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/angar_bo4ka_07_02.jpg
+
+newmtl default_ship_open_gate
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+
+newmtl default_door_right
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+
+newmtl default_skin
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0 0 0.25098
+Ks 1 1 1
+Km 0
+
+newmtl default_interior1
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.247059 0.239216 0.286275
+Ks 1 1 1
+Km 0
+map_Kd /Maps/bldg6_Form22_1_mtl1_diffcol_02.jpg
+
+newmtl default_cushions
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.247059 0.239216 0.286275
+Ks 1 1 1
+Km 0
+map_Kd /Maps/yx1_02_01_01_03.jpg
+
+newmtl material_1
+d 0.8
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0 0 0
+Ks 1 1 1
+Km 0
+
+newmtl default_ship
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/1pt.jpg
+
+newmtl default_default
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.286275 0.282353 0.254902
+Ks 1 1 1
+Km 0
+map_Kd /Maps/mpo1.jpg
+
+newmtl default_rear_skin
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/asd2.jpg
+
+newmtl default_engines
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/cp2_03.jpg
+
+newmtl default_lght
+d 1
+Ns 0.75
+Ni 0
+Ka 0 1 1
+Kd 0 1 1
+Ks 1 1 1
+Km 0
+
+newmtl default_fire
+d 1
+Ns 0.75
+Ni 0
+Ka 0 1 1
+Kd 0 1 1
+Ks 1 1 1
+Km 0
+
+newmtl default_interior_loaded
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/gm1.jpg
+
+newmtl default_mid_panel
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/CockpitHUD.jpg
+
+newmtl default_joystick
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 0 0
+Ks 1 1 1
+Km 0
+
+newmtl default_switch2
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.247059 0.239216 0.286275
+Ks 1 1 1
+Km 0
+
+newmtl default_light
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.501961 1 0
+Ks 1 1 1
+Km 0
+
+newmtl default_joystick_joystick
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/cp2_03_01.jpg
+
+newmtl default_handle
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.156863 0.14902 0.176471
+Ks 1 1 1
+Km 0
+
+newmtl default_power_control
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/ft4.jpg
+
+newmtl default_power_case
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/ca1c.jpg
+
+newmtl default_handle_power_control
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.156863 0.14902 0.176471
+Ks 1 1 1
+Km 0
+map_Kd /Maps/c5.jpg
+
+newmtl default_lever
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+
