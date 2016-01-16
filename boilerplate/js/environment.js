@@ -82,7 +82,9 @@ function makeTunnel() {
     object.rotation.x = Math.PI/2.0;
     object.position.z = TUNNEL_BACK/2.0;
     // hide the actual object as we dont care to display it. only the edges
-    object.visible = false;
+    object.visible = true;
+
+    // object.scale.x *= -1;
 
     edges = new THREE.EdgesHelper( object, 0x0000ff);
 
