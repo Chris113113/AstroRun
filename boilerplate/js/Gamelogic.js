@@ -6,7 +6,7 @@ function initializeAsteroidGame() {
     var mesh	= new THREE.Mesh( geometry, material );
     mesh.position.set(0, 0, -5);
     scene.add( mesh );
-    scene.add( spaceship );
+    //scene.add( spaceship );
     camera.lookAt(mesh.position);
     mesh.visible = false;
 
@@ -17,7 +17,7 @@ function initializeAsteroidGame() {
         console.log( item, loaded, total );
     };
 
-    loadSpaceship(manager);
+    if(!spaceship) loadSpaceship(manager);
 
     for(var i = 0; i < 10; i++) {
         setTimeout(function () {
@@ -161,11 +161,6 @@ function loadSpaceship(manager) {
             function ( object ) {
                 object.position.set(0, 250, -1000);
                 spaceship = object;
-
-                spaceship.geometry.applyMatrix( new THREE.Matrix4().makeTranslation(0, 0, -100) );
-                spaceship.geometry.verticesNeedUpdate = true;
-                var axisHelper = new THREE.AxisHelper(100);
-                spaceship.add(axisHelper);
             },
             // Function called when downloads progress
             function ( xhr ) {
