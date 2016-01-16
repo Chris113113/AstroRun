@@ -24,9 +24,9 @@ function makeParticles() {
     // we're gonna move from z position -1000 (far away)
     // to 1000 (where the camera is) and add a random particle at every pos.
     var geometry   = new THREE.SphereGeometry(0.5, 32, 32);
-    var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
-    material.fog = false;
     for ( var count = 0; count < 2500; count += 1 ) {
+        var material = new THREE.MeshBasicMaterial( {color: Math.random()*0x00ff00} );
+        material.fog = false;
         var sphere = new THREE.Mesh(geometry, material);
 
         // polar coordinates to determine the spawn area of the particles
@@ -42,7 +42,7 @@ function makeParticles() {
         sphere.position.z = Math.random()*(TUNNEL_BACK-800.0);
 
         // scale it up a bit
-        //sphere.scale.x = sphere.scale.y = 10;
+        sphere.scale.x = sphere.scale.y = 2;
 
         // add it to the scene
         scene.add( sphere );
@@ -57,7 +57,7 @@ function makeTunnel() {
     // draw the tunnel
     var material	= new THREE.MeshNormalMaterial();
     var radius = TUNNEL_RADIUS;
-    var segments = 24;
+    var segments = 26;
 
     var count = 0;
     for(var step = 0.0; step > TUNNEL_BACK; step -= TUNNEL_SEGMENT_STEP) {

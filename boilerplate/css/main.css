@@ -3,9 +3,9 @@ body {
 	padding		: 0;
 	margin		: 0;
 
-	color		: #222;
+	color		: white;
 	background-color: #BBB;
-	font-family	: arial;
+	font-family	: 'Orbitron', sans-serif;
 	font-size	: 100%;
 }
 #info .top {
@@ -16,7 +16,7 @@ body {
 	text-align	: center;
 }
 #info a {
-	color		: #66F;
+	color		: white;
 	text-decoration	: none;
 }
 #info a:hover {
@@ -27,4 +27,58 @@ body {
 	bottom		: 0px;
 	right		: 5px;
 	padding		: 5px;
+}
+
+#menu {
+
+}
+
+#menu #credits-menu {
+	display: none;
+	position: absolute;
+	width: 100%;
+}
+
+#menu #credits-menu {
+	text-align: center;
+}
+
+#menu #credits-menu h1 {
+	margin-top: 10%;
+	margin-bottom: 17%;
+	font-weight: 700;
+	font-size: 4em;
+	text-align: center;
+}
+
+#menu #title-menu {
+	display: none;
+	position: absolute;
+	width: 100%;
+}
+
+#menu #title-menu h2 {
+	text-align: center;
+}
+
+#menu #title-menu h1 {
+	margin-top: 10%;
+	margin-bottom: 17%;
+	font-weight: 700;
+	font-size: 4em;
+	text-align: center;
+}
+
+#menu #game-hud {
+	position: absolute;
+	right: 20px;
+	top: 10px;
+	display: none;
+}
+
+#menu #game-hud p {
+	color: white;
+	margin: 4px 0;
+	font-weight: bold;
+	text-align: right;
 }

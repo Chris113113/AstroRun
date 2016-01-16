@@ -1,17 +1,17 @@
 <!doctype html>
 <html>
 	<head>
-		<title>learningthree.js boiler plate for three.js</title>
+		<title>Astrorun - Knight Hacks 2016</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		
-			
+
+		<link href='https://fonts.googleapis.com/css?family=Orbitron:400,700' rel='stylesheet' type='text/css'>
+
 		<script src="vendor/three.js/Three.js"></script>
 		<script src="vendor/three.js/Detector.js"></script>
 		<!-- https://github.com/mrdoob/stats.js -->
 		<script src="vendor/three.js/Stats.js"></script>
 
-		<script src="vendor/threex/THREEx.screenshot.js"></script>
 		<script src="vendor/threex/THREEx.FullScreen.js"></script>
 		<script src="vendor/threex/THREEx.WindowResize.js"></script>
 		<script src="vendor/threex.dragpancontrols.js"></script>
@@ -20,28 +20,46 @@
 		<script src="js/OBJLoader.js"></script>
 		<script src="js/MTLLoader.js"></script>
 		<script src="js/Gamelogic.js"></script>
-
-
+		<script type="text/javascript" src="js/environment.js"></script>
 
 		<link  href="css/main.css" rel="stylesheet"/>
 	</head>
 <body>
 	<!-- three.js container -->
-    	<div id="container"></div>
+    <div id="container">
+		<div id="menu">
+			<div id="title-menu">
+				<h1>Astrorun</h1>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)">Start</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.CREDITS)">Credits</h2>
+			</div>
+			<div id="credits-menu">
+				<h1>Astrorun Credits</h1>
+				<p>Created by Grant Hernandez and Chris Pirillo for <a href="http://knighthacks.club">Knight Hacks 2016</a></p>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
+			</div>
+			<div id="game-hud">
+				<p id="hud-level">Level 1</p>
+				<p id="hud-time">00:05</p>
+			</div>
+		</div>
+
+	</div>
 	<!-- info on screen display -->
 	<div id="info">
-		<!--<div class="top">
-			<a href="http://learningthreejs.com/blog/2011/12/20/boilerplate-for-three-js/" target="_blank">LearningThree.js</a>
-			boiler plate for
-			<a href="https://github.com/mrdoob/three.js/" target="_blank">three.js</a>
-		</div>-->
 		<div class="bottom" id="inlineDoc" >
-			- <i>p</i> for screenshot
 		</div>
 	</div>
 
-	<script type="text/javascript" src="js/environment.js"></script>
 	<script type="text/javascript">
+		var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4});
+
+		// start in the init state
+		var gameState = GameStateEnum.INIT;
+
+		///////////////////////////
+		// RENDER STATE
+		///////////////////////////
 		var stats, scene, renderer;
 		var camera, cameraControl;
 
@@ -50,14 +68,14 @@
 		var boneMeshes = [];
 		var meshes = [];
 
-		var loadAssets = false;
-		var gameplay = true,
-				asteroids = [], astVelocity = 50, spaceship = {};
+		var	asteroids = [], astVelocity = 50, spaceship = {};
 
 		///////////////////////////
 		// SETTINGS
 		///////////////////////////
 		var rangeLimited = true;
+		var loadAssets = false; // load expensive assets and show the progress bar
+		var gameplay = true; // enabled if the game is going to be played
 
 		///////////////////////////
 		// ENVIRONMENT VARIABLES
@@ -71,7 +89,14 @@
 		var tunnelSegments = [];
 		var particles = [];
 
-		if( !init() )	animate();
+		/////////////////////////////////////////////////////////////////////////////////////////
+
+		// do one time initialization
+		if( !init() ) {
+			// enter the main menu
+			transitionTo(GameStateEnum.MENU);
+			animate();
+		}
 
 		// init the scene
 		function init(){
@@ -99,7 +124,7 @@
 			stats.domElement.style.bottom	= '0px';
 			document.body.appendChild( stats.domElement );
 
-			// create a scene
+			// create a scene for all scenes
 			scene = new THREE.Scene();
 
 			// put a camera in the scene
@@ -120,12 +145,76 @@
 
 			// transparently support window resize
 			THREEx.WindowResize.bind(renderer, camera);
-			// allow 'p' to make screenshot
-			THREEx.Screenshot.bindKey(renderer);
+
+			//var oldFullScreenCancel = THREEx.FullScreen.cancel;
+			//THREEx.FullScreen.cancel = function () {
+			//	console.log("Cancelling fullscreen");
+			//	document.getElementById('inlineDoc').style.display = true;
+			//	oldFullScreenCancel()
+			//};
+			//var oldFullScreenRequest = THREEx.FullScreen.request;
+			//THREEx.FullScreen.request = function (entity) {
+			//	console.log("Entering fullscreen");
+			//	document.getElementById('inlineDoc').style.display = false;
+			//	oldFullScreenRequest()
+			//};
+
 			// allow 'f' to go fullscreen where this feature is supported
 			if( THREEx.FullScreen.available() ){
-				THREEx.FullScreen.bindKey();		
-				document.getElementById('inlineDoc').innerHTML	+= "- <i>f</i> for fullscreen";
+				THREEx.FullScreen.bindKey();
+				document.getElementById('inlineDoc').innerHTML	+= "F for fullscreen";
+			}
+
+		}
+
+		function clearScene() {
+			for( var i = scene.children.length - 1; i >= 0; i--) {
+				var obj = scene.children[i];
+				scene.remove(obj);
+			}
+		}
+
+		function sceneMainMenu() {
+			clearScene();
+
+			// put a camera in the scene
+			camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000 );
+			camera.position.set(0, 0, 5);
+			scene.add(camera);
+
+			var light = new THREE.AmbientLight( 0xBBBBBB ); // soft white light
+			scene.add( light );
+			// create a camera contol
+			cameraControls	= new THREEx.DragPanControls(camera);
+
+			// allow debugging with the camera
+			if(rangeLimited) {
+				cameraControls.rangeX = -5;
+				cameraControls.rangeY = 5;
+			}
+			// draw fog
+			scene.fog = new THREE.FogExp2(0x0, FOG_FALLOFF);
+
+			makeTunnel();
+			makeParticles();
+		}
+
+		function scenePlaying() {
+			clearScene();
+
+			camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000 );
+			camera.position.set(0, 0, 5);
+			scene.add(camera);
+
+			var light = new THREE.AmbientLight( 0xBBBBBB ); // soft white light
+			scene.add( light );
+			// create a camera contol
+			cameraControls	= new THREEx.DragPanControls(camera);
+
+			// allow debugging with the camera
+			if(rangeLimited) {
+				cameraControls.rangeX = -5;
+				cameraControls.rangeY = 5;
 			}
 
 			// draw fog
@@ -136,11 +225,59 @@
 				initializeAsteroidGame();
 			}
 
-			////////////////////////////////////////
-			// make objects
-
-			makeParticles();
 			makeTunnel();
+			makeParticles();
+		}
+
+		function transitionTo(newGameState) {
+			if(gameState == GameStateEnum.INIT) {
+				if(newGameState != GameStateEnum.MENU) {
+					throw new Error("Invalid state transition");
+				}
+
+				sceneMainMenu();
+				document.getElementById('title-menu').style.display = "block";
+			} else if(gameState == GameStateEnum.MENU) {
+				document.getElementById('title-menu').style.display = "none";
+
+				if(newGameState == GameStateEnum.CREDITS) {
+					document.getElementById('credits-menu').style.display = "block";
+				} else if (newGameState == GameStateEnum.PLAYING) {
+					document.getElementById('game-hud').style.display = "inline-block";
+
+					scenePlaying();
+					console.log("STATE: playing")
+				} else {
+					throw new Error("Invalid state transition");
+				}
+			} else if(gameState == GameStateEnum.CREDITS) {
+				if(newGameState != GameStateEnum.MENU) {
+					throw new Error("Invalid state transition");
+				}
+
+				document.getElementById('credits-menu').style.display = "none";
+				document.getElementById('title-menu').style.display = "block";
+
+				console.log("STATE: menu")
+			} else if(gameState == GameStateEnum.PLAYING) {
+				if(newGameState != GameStateEnum.DEAD) {
+					throw new Error("Invalid state transition");
+				}
+
+				console.log("STATE: DEAD")
+            } else if(gameState == GameStateEnum.DEAD) {
+				if(newGameState == GameStateEnum.MENU) {
+
+				} else if(newGameState == GameStateEnum.PLAYING) {
+
+				} else {
+					throw new Error("Invalid state transition");
+				}
+            } else {
+				throw new Error("Invalid state");
+			}
+
+			gameState = newGameState;
 		}
 
 		// animation loop

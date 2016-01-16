@@ -53,7 +53,6 @@ function updateMesh( bone, mesh ) {
     mesh.scale.set( .15, .15, .15 );
 
     scene.add( mesh );
-
 }
 
 function leapAnimate( frame ) {
