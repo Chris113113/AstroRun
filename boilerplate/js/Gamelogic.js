@@ -80,6 +80,18 @@ function updateMesh( bone, mesh ) {
 }
 
 function leapAnimate( frame ) {
+
+    if(gameState == GameStateEnum.DEAD){
+        if (frame.gestures.length > 0) {
+            for (var i = 0; i < frame.gestures.length; i++) {
+                var gesture = frame.gestures[i];
+                if (gesture.type == "swipe") {
+                    transitionTo(GameStateEnum.PLAYING);
+                }
+            }
+        }
+    }
+    
     if(gameState != GameStateEnum.PLAYING)
       return;
 
