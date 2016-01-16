@@ -91,7 +91,7 @@ function leapAnimate( frame ) {
             }
         }
     }
-    
+
     if(gameState != GameStateEnum.PLAYING)
       return;
 
