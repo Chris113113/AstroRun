@@ -17,8 +17,8 @@ var stats, scene, renderer;
 var camera, cameraControl;
 
 var baseBoneRotation = ( new THREE.Quaternion ).setFromEuler( new THREE.Euler( 0, 0, Math.PI / 2 ) );
-var armMeshes = [];
-var boneMeshes = [];
+var mouseX = window.innerWidth/2;
+var mouseY = window.innerHeight/2;
 var meshes = [];
 
 
@@ -28,12 +28,14 @@ var meshes = [];
 var rangeLimited = true;
 var loadAssets = true; // load expensive assets and show the progress bar
 var gameplay = true; // enabled if the game is going to be played
+var usingLeap = false; // Support for LeapMotion
+var debug_mode = false; // Shows bounding boxes of asteroids and ship
 
 ///////////////////////////
 // ENVIRONMENT VARIABLES
 ///////////////////////////
 var FOG_FALLOFF = 0.003;
-var RECOVER_TIME = 333;
+var RECOVER_TIME = 750;    // Recovery time in ms
 
 // tunnel variables
 var TUNNEL_BACK = -800.0;
@@ -53,6 +55,11 @@ var MAX_ASTEROIDS = 100;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// Event listener to track mouse movement
+document.onmousemove = function(e) {
+    mouseX = e.pageX;
+    mouseY = e.pageY;
+}
 
 // do one time initialization
 if( !init() ) {
@@ -217,7 +224,7 @@ function resetGameState() {
     gameLives = 3;
     currColorPointer = 0;
 
-    if(gameTimerUpdateString) window.clearInterval(gameTimerUpdateString);
+    if(gameTimerUpdateString) clearInterval(gameTimerUpdateString);
     document.getElementById('hud-time').innerText = "00:00";
 }
 
@@ -233,7 +240,7 @@ function startNewGame() {
     gameTimer.start();
 
     // update the play timer
-    gameTimerUpdateString = window.setInterval(function() {
+    gameTimerUpdateString = setInterval(function() {
         var minutes = parseInt(gameTimer.getElapsedTime()/60);
         var seconds = parseInt(gameTimer.getElapsedTime() % 60);
         var totalSeconds = parseInt(gameTimer.getElapsedTime());
@@ -270,7 +277,7 @@ function playerHit() {
 }
 
 function blinkShip() {
-    spaceship.canCollide = false;
+    spaceship.recovery = true;
     scene.remove(spaceship);
     setTimeout(function() {
         scene.add(spaceship);
@@ -278,7 +285,7 @@ function blinkShip() {
             scene.remove(spaceship);
             setTimeout(function() {
                 scene.add(spaceship);
-                spaceship.canCollide = true;
+                spaceship.recovery = false;
             }, RECOVER_TIME/3);
         }, RECOVER_TIME/3);
     }, RECOVER_TIME/3);
@@ -302,7 +309,7 @@ function drawHealthBar() {
 function stopGame() {
     document.body.style.cursor = 'default';
     gameTimer.stop();
-    window.clearInterval(gameTimerUpdateString);
+    clearInterval(gameTimerUpdateString);
 }
 
 function transitionTo(newGameState) {
@@ -404,8 +411,10 @@ function animate() {
     updateParticles();
 
     // animate others
+    if(!usingLeap) updateSpaceshipByMouse();
     updateTailRings();
     updateAsteroids();
+    if(spaceship && spaceship.helper) spaceship.helper.update();
 
     // do the render
     render();
