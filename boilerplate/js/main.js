@@ -1,7 +1,7 @@
 var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4});
 
-var explosionSound = new Audio("sounds/Explosion.mp3");
-var hitSound = new Audio("sounds/Hit.mp3");
+var explosionSound = new Audio("Sounds/Explosion.mp3");
+var hitSound = new Audio("Sounds/Hit.mp3");
 
 // start in the init state
 var gameState = GameStateEnum.INIT;
@@ -70,6 +70,7 @@ if( !init() ) {
 
 // init the scene
 function init(){
+
 
     if( Detector.webgl ){
         renderer = new THREE.WebGLRenderer({

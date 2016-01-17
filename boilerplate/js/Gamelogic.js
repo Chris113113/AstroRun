@@ -28,10 +28,12 @@ function initializeAsteroidGame() {
 }
 
 function updateAsteroids() {
-    for(var i = 0; i < asteroids.length; i++) {
+
+    var len = asteroids.length;
+    for(var i = len - 1; i >= 0; i--) {
         var obj = asteroids[i];
         if(!obj.position) {
-            console.log(obj);
+            continue;
         }
 
         obj.position.z += astVelocity + gameLevel*5;
@@ -46,15 +48,8 @@ function updateAsteroids() {
             var positionObj = getNewAsteroidPosition();
 
             var newObj = asteroids.shift();
-            if(newObj !== obj) {
-                //console.log(newObj === obj);
-                //console.log(newObj);
-                //console.log(obj);
-            }
-
 
             newObj.position.set(positionObj.x, positionObj.y, positionObj.z);
-
 
             asteroids.push(newObj);
             if(Math.random() > .98 && asteroids.length < MAX_ASTEROIDS) {
@@ -193,7 +188,7 @@ function generateAsteroid() {
 
 function getNewAsteroidPosition() {
     // polar coordinates to determine the spawn area of the particles
-    var r = Math.random()*20;
+    var r = Math.random()*28;
     var theta = Math.random()*Math.PI*2;
 
     // give it a random x and y position between -500 and 500
