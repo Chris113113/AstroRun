@@ -21,30 +21,58 @@ function initializeAsteroidGame() {
 
     for(var i = 0; i < 10; i++) {
         setTimeout(function () {
-            asteroids.push(generateAsteroid({}));
+            asteroids.push(generateAsteroid());
         }, i * 600);
     }
 
 }
 
 function updateAsteroids() {
-    for(var i = asteroids.length - 1; i >= 0; i--) {
+    for(var i = 0; i < asteroids.length; i++) {
         var obj = asteroids[i];
+        if(!obj.position) {
+            console.log(obj);
+        }
         obj.position.z += astVelocity + gameLevel*5;
+
+        // Reset positions
         if(obj.position.z > 500){
-            scene.remove(obj);
-            asteroids.splice(i,1);
-            asteroids.push(generateAsteroid({}));
+            console.log(obj.position);
+            var positionObj = getNewAsteroidPosition();
+
+            console.log(obj.position);
+
+            var newObj = asteroids.shift();
+            if(newObj !== obj) {
+                //console.log(newObj === obj);
+                //console.log(newObj);
+                //console.log(obj);
+            }
+
+
+            newObj.position.set(positionObj.x, positionObj.y, positionObj.z);
+
+
+            asteroids.push(newObj);
             if(Math.random() > .95 && asteroids.length < MAX_ASTEROIDS) {
                 setTimeout(function() {
-                    asteroids.push(generateAsteroid({}));
+                    asteroids.push(generateAsteroid());
                 }, Math.random()*600+200);
             }
         }
-        else {
-            if(/*numFrames % 3 == 0 && */spaceship !== undefined) {
-                detectCollisions(obj);
-            }
+
+    }
+
+    for(var i = 0; i < asteroids.length; i++) {
+
+        // All asteroids beyond this limit are too far away to collide
+        if(asteroids[i].position.z < -150) {
+            console.log('broke at i = ', i);
+            break;
+        }
+
+        if(spaceship !== undefined) {
+            detectCollisions(obj);
         }
     }
 }
@@ -104,7 +132,7 @@ function updateMesh( bone ) {
 
 function leapAnimate( frame ) {
 
-    if(gameState == GameStateEnum.DEAD){
+    if(gameState == GameStateEnum.DEAD || gameState == GameStateEnum.MENU){
         if (frame.gestures.length > 0) {
             for (var i = 0; i < frame.gestures.length; i++) {
                 var gesture = frame.gestures[i];
@@ -141,22 +169,36 @@ function leapAnimate( frame ) {
     stats.update();
 }
 
-function generateAsteroid(mesh) {
+function generateAsteroid() {
     var radius = Math.random() * 3 + 1;
     var geometry = new THREE.SphereGeometry( radius );
     var material = new THREE.MeshNormalMaterial();
     var sphere = new THREE.Mesh( geometry, material );
 
+    var positionObj = getNewAsteroidPosition();
+    sphere.position.set(positionObj.x, positionObj.y, positionObj.z);
+
+    scene.add(sphere);
+    return sphere;
+}
+
+function getNewAsteroidPosition() {
     // polar coordinates to determine the spawn area of the particles
     var r = Math.random()*20;
     var theta = Math.random()*Math.PI*2;
 
     // give it a random x and y position between -500 and 500
-    sphere.position.setX(r * Math.cos(theta));
-    sphere.position.setY(r * Math.sin(theta));
-    sphere.position.setZ(-5000);
-    scene.add(sphere);
-    return sphere;
+
+    var newPosition = {
+        x: 0,
+        y: 0,
+        z: -5000
+    }
+
+    newPosition.x = (r * Math.cos(theta));
+    newPosition.y = (r * Math.sin(theta));
+
+    return newPosition;
 }
 
 function detectCollisions(obj) {
