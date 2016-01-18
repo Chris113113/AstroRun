@@ -44,7 +44,7 @@ function updateAsteroids() {
         }
 
         // Reset positions
-        if(obj.position.z > 100){
+        if(obj.position.z > 500){
             var positionObj = getNewAsteroidPosition();
 
             var newObj = asteroids.shift();
@@ -140,7 +140,7 @@ function leapAnimate( frame ) {
     }
 
     if(gameState != GameStateEnum.PLAYING)
-      return;
+        return;
 
     var countBones = 0;
     var countArms = 0;
@@ -212,7 +212,6 @@ function detectCollisions(obj) {
 
     var pos = obj.position.distanceTo(spaceship.position);
     if(pos < 150) {
-        console.log(pos);
         var compBox = new THREE.Box3().setFromObject(obj);
         var ssbox = new THREE.Box3().setFromObject(spaceship);
         var min = compBox.min;
@@ -227,9 +226,6 @@ function detectCollisions(obj) {
             ((nmin.y < smax.y && nmin.y > smin.y ) || ( nmax.y > smin.y && nmax.y < smax.y)) &&
             nmax.z >= smin.z) {
 
-            console.log((nmin.x < smax.x && nmin.x > smin.x ) , ( nmax.x > smin.x && nmax.x < smax.x));
-            console.log((nmin.y < smax.y && nmin.y > smin.y ) , ( nmax.y > smin.y && nmax.y < smax.y));
-            console.log(nmax.z >= smin.z);
             playerHit();
         }
         //if (newBox.isIntersectionBox(new THREE.Box3().setFromObject(spaceship))) {
@@ -311,4 +307,17 @@ function loadSpaceship(manager) {
         spaceship = new THREE.Mesh(new THREE.SphereGeometry(5), new THREE.MeshNormalMaterial());
     }
 
+}
+
+
+function pauseGame(){
+    if(gameState == GameStateEnum.PLAYING){
+        transitionTo(GameStateEnum.PAUSED);
+    }
+}
+
+function resumeGame(){
+    if(gameState == GameStateEnum.PAUSED){
+        transitionTo(GameStateEnum.PLAYING);
+    }
 }
