@@ -266,9 +266,7 @@ function playerHit() {
 
     drawHealthBar();
 
-    console.log("Have I died?")
     if(gameLives <= 0) {
-        console.log("I have died")
         scene.remove( spaceship );
         transitionTo(GameStateEnum.DEAD)
     }
@@ -411,6 +409,17 @@ function drawMenu() {
 
 function setSensitivity(value) {
     sensitivityLevel = (10 - value);
+}
+
+function toggleFPS(checked) {
+
+    console.log('toggleFPS',checked);
+    if(checked) {
+        document.getElementById("stats").style.display = "block";
+    }
+    else {
+        document.getElementById("stats").style.display = "none";
+    }
 }
 
 // animation loop
