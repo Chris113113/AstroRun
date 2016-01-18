@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html onmouseleave="pauseGame()" onmouseenter="resumeGame()">
 	<head>
 		<title>AstroRun - Knight Hacks 2016</title>
 		<meta charset="utf-8">
@@ -57,6 +57,10 @@
 				<h1>YOU DIED</h1>
 				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)" ontouchstart="javascript:transitionTo(GameStateEnum.PLAYING)">Retry</h2>
 				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Give up</h2>
+			</div>
+			<div id="game-hud-paused">
+				<h1>PAUSED</h1>
+				<h3>Bring mouse back onto screen.</h3>
 			</div>
 		</div>
 

@@ -44,7 +44,7 @@ function updateAsteroids() {
         }
 
         // Reset positions
-        if(obj.position.z > 100){
+        if(obj.position.z > 500){
             var positionObj = getNewAsteroidPosition();
 
             var newObj = asteroids.shift();
@@ -140,7 +140,7 @@ function leapAnimate( frame ) {
     }
 
     if(gameState != GameStateEnum.PLAYING)
-      return;
+        return;
 
     var countBones = 0;
     var countArms = 0;
@@ -307,4 +307,17 @@ function loadSpaceship(manager) {
         spaceship = new THREE.Mesh(new THREE.SphereGeometry(5), new THREE.MeshNormalMaterial());
     }
 
+}
+
+
+function pauseGame(){
+    if(gameState == GameStateEnum.PLAYING){
+        transitionTo(GameStateEnum.PAUSED);
+    }
+}
+
+function resumeGame(){
+    if(gameState == GameStateEnum.PAUSED){
+        transitionTo(GameStateEnum.PLAYING);
+    }
 }
