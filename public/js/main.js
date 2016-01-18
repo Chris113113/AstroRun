@@ -1,4 +1,4 @@
-var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4, OPTIONS : 5, PAUSED : 6});
+var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4, OPTIONS : 5});
 
 var explosionSound = new Audio("Sounds/Explosion.mp3");
 var hitSound = new Audio("Sounds/Hit.mp3");
@@ -21,7 +21,7 @@ var mouseX = window.innerWidth/2;
 var mouseY = window.innerHeight/2;
 var meshes = [];
 var sensitivityLevel = 5;
-var animateID;
+
 
 ///////////////////////////
 // SETTINGS
@@ -49,7 +49,7 @@ var TUNNEL_VELOCITY = 2.3 * gameLevel;
 var particles = [];
 
 // asteroidVariables
-var asteroids = [];
+var	asteroids = [];
 var astVelocity = 25;
 var spaceship = undefined;
 var MAX_ASTEROIDS = 100;
@@ -79,25 +79,25 @@ function init(){
 
     if( Detector.webgl ){
         renderer = new THREE.WebGLRenderer({
-            antialias       : true, // to get smoother output
-            preserveDrawingBuffer   : true  // to allow screenshot
+            antialias		: true,	// to get smoother output
+            preserveDrawingBuffer	: true	// to allow screenshot
         });
 
         renderer.setClearColor(0x000000, 1);
         // uncomment if webgl is required
         //}else{
-        //  Detector.addGetWebGLMessage();
-        //  return true;
+        //	Detector.addGetWebGLMessage();
+        //	return true;
     }else{
-        renderer    = new THREE.CanvasRenderer();
+        renderer	= new THREE.CanvasRenderer();
     }
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById('container').appendChild(renderer.domElement);
 
     // add Stats.js - https://github.com/mrdoob/stats.js
     stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.bottom   = '0px';
+    stats.domElement.style.position	= 'absolute';
+    stats.domElement.style.bottom	= '0px';
     document.body.appendChild( stats.domElement );
 
     // create a scene for all scenes
@@ -111,7 +111,7 @@ function init(){
     var light = new THREE.AmbientLight( 0xBBBBBB ); // soft white light
     scene.add( light );
     // create a camera contol
-    cameraControls  = new THREEx.DragPanControls(camera);
+    cameraControls	= new THREEx.DragPanControls(camera);
 
     // allow debugging with the camera
     if(rangeLimited) {
@@ -124,15 +124,15 @@ function init(){
 
     //var oldFullScreenCancel = THREEx.FullScreen.cancel;
     //THREEx.FullScreen.cancel = function () {
-    //  console.log("Cancelling fullscreen");
-    //  document.getElementById('inlineDoc').style.display = true;
-    //  oldFullScreenCancel()
+    //	console.log("Cancelling fullscreen");
+    //	document.getElementById('inlineDoc').style.display = true;
+    //	oldFullScreenCancel()
     //};
     //var oldFullScreenRequest = THREEx.FullScreen.request;
     //THREEx.FullScreen.request = function (entity) {
-    //  console.log("Entering fullscreen");
-    //  document.getElementById('inlineDoc').style.display = false;
-    //  oldFullScreenRequest()
+    //	console.log("Entering fullscreen");
+    //	document.getElementById('inlineDoc').style.display = false;
+    //	oldFullScreenRequest()
     //};
 
     // allow 'f' to go fullscreen where this feature is supported
@@ -167,7 +167,7 @@ function sceneMainMenu() {
     var light = new THREE.AmbientLight( 0xBBBBBB ); // soft white light
     scene.add( light );
     // create a camera contol
-    cameraControls  = new THREEx.DragPanControls(camera);
+    cameraControls	= new THREEx.DragPanControls(camera);
 
     // allow debugging with the camera
     if(rangeLimited) {
@@ -185,7 +185,6 @@ function sceneMainMenu() {
     makeParticles();
 }
 
-
 function scenePlaying() {
     clearScene();
 
@@ -196,7 +195,7 @@ function scenePlaying() {
     var light = new THREE.AmbientLight( 0xBBBBBB ); // soft white light
     scene.add( light );
     // create a camera contol
-    cameraControls  = new THREEx.DragPanControls(camera);
+    cameraControls	= new THREEx.DragPanControls(camera);
 
     // allow debugging with the camera
     if(rangeLimited) {
@@ -216,16 +215,6 @@ function scenePlaying() {
 
     makeTunnel();
     makeParticles();
-}
-
-function scenePaused() {
-    cancelAnimationFrame( animateID );
-    gameTimer.stop();
-}
-
-function sceneResumed() {
-    //animate();
-    gameTimer.start();
 }
 
 function pad(num, size) {
@@ -356,8 +345,6 @@ function transitionTo(newGameState) {
     } else if(gameState == GameStateEnum.PLAYING) {
         if (newGameState == GameStateEnum.PLAYING) {
             // ignore
-        } else if(newGameState == GameStateEnum.PAUSED){
-            scenePaused();
         } else if (newGameState != GameStateEnum.DEAD) {
             throw new Error("Invalid state transition: " + newGameState);
         } else {
@@ -373,10 +360,6 @@ function transitionTo(newGameState) {
             scenePlaying();
         } else {
             throw new Error("Invalid state transition: " + newGameState);
-        }
-    } else if(gameState == GameStateEnum.PAUSED){
-        if(newGameState == GameStateEnum.PLAYING){
-            sceneResumed();
         }
     } else {
         throw new Error("Invalid state");
@@ -394,11 +377,10 @@ function drawMenu() {
     var credits = document.getElementById('credits-menu');
     var title = document.getElementById('title-menu');
     var fullscreenText = document.getElementById('inlineDoc');
-    var hudPaused = document.getElementById('game-hud-paused');
 
     // turn everything off
 
-    var all = [hudDead, hud, options, credits, title, fullscreenText, hudPaused];
+    var all = [hudDead, hud, options, credits, title, fullscreenText];
     all.forEach(function(item){item.style.display = "none"});
 
     if(gameState == GameStateEnum.INIT) {
@@ -406,27 +388,24 @@ function drawMenu() {
         title.style.display = "block";
         fullscreenText.style.display = "block";
 
-        //console.log("MENU: " + "MAIN")
+        console.log("MENU: " + "MAIN")
     } else if(gameState == GameStateEnum.OPTIONS) {
         options.style.display = "block";
 
-        //console.log("MENU: " + "OPTIONS")
+        console.log("MENU: " + "OPTIONS")
     } else if(gameState == GameStateEnum.CREDITS) {
         credits.style.display = "block";
 
-        //console.log("MENU: " + "CREDITS")
+        console.log("MENU: " + "CREDITS")
     } else if(gameState == GameStateEnum.PLAYING) {
         hud.style.display = "inline-block";
 
-        //console.log("MENU: " + "PLAYING")
+        console.log("MENU: " + "PLAYING")
     } else if(gameState == GameStateEnum.DEAD) {
         hudDead.style.display = "block";
         hud.style.display = "inline-block";
 
-        //console.log("MENU: " + "DEAD")
-    } else if(gameState == GameStateEnum.PAUSED) {
-        hudPaused.style.display = "block";
-
+        console.log("MENU: " + "DEAD")
     } else {
         throw new Error("Invalid state");
     }
@@ -434,11 +413,11 @@ function drawMenu() {
 
 function setSensitivity(value) {
     sensitivityLevel = (10 - value);
-
 }
 
 function toggleFPS(checked) {
 
+    console.log('toggleFPS',checked);
     if(checked) {
         document.getElementById("stats").style.display = "block";
     }
@@ -450,6 +429,9 @@ function toggleFPS(checked) {
 // animation loop
 function animate() {
 
+    // loop on request animation loop
+    // - it has to be at the beginning of the function
+    // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
     requestAnimationFrame(animate);
 
     // animate the tunnel
@@ -490,7 +472,6 @@ function touchHandler(event)
         case "touchend":   type = "mouseup";   break;
         default:           return;
     }
-
 
     // initMouseEvent(type, canBubble, cancelable, view, clickCount,
     //                screenX, screenY, clientX, clientY, ctrlKey,
