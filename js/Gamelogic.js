@@ -166,6 +166,7 @@ function leapAnimate( frame ) {
     else {
 
     }
+
 }
 
 function updateSpaceshipByMouse() {
