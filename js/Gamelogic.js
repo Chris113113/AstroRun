@@ -91,12 +91,11 @@ function setSpaceShipPosition(posX, posY, posZ) {
 
     if(gameState !== GameStateEnum.PLAYING) return;
 
-    var r = Math.sqrt(posX*posX + posY*posY);
+    var r = (posX*posX + posY*posY);
     if(posX == 0) posX = .00001;
     var theta = Math.atan(posY/posX);
 
-
-    if(r <= TUNNEL_RADIUS) {
+    if(r <= TUNNEL_RADIUS * TUNNEL_RADIUS) {
         spaceship.position.set(posX, posY + 5, posZ);
     }
     else {
