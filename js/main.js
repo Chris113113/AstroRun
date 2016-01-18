@@ -439,6 +439,12 @@ function setSensitivity(value) {
 }
 
 function toggleFPS(checked) {
+    
+    if(checked == undefined) {
+        var cb = document.getElementById("fps_checkbox")
+        cb.checked = !cb.checked;
+        checked = cb.checked;
+    }
 
     if(checked) {
         document.getElementById("stats").style.display = "block";

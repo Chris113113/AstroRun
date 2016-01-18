@@ -167,8 +167,6 @@ function leapAnimate( frame ) {
 
     }
 
-    renderer.render( scene, camera );
-    stats.update();
 }
 
 function updateSpaceshipByMouse() {

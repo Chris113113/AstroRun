@@ -39,7 +39,7 @@
 			<div id="options-menu">
 				<h1>Options</h1>
 				<span><label>Sensitivity &nbsp;&nbsp;</label><input id="sensitivity_input" type="range" value="5" min="1" max="9" oninput="setSensitivity(this.value)" /></span><br>
-				<span><label>Show FPS &nbsp;&nbsp;</label><input checked oninput="toggleFPS(this.checked)" type="checkbox"/></span>
+				<span ontouchstart="toggleFPS(this.checked)" ><label>Show FPS &nbsp;&nbsp;</label><input id="fps_checkbox" checked onclick="toggleFPS(this.checked)" type="checkbox"/></span>
 				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 			</div>
 			<div id="credits-menu">
