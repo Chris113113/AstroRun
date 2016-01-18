@@ -15,7 +15,7 @@
 		<script src="vendor/threex/THREEx.FullScreen.js"></script>
 		<script src="vendor/threex/THREEx.WindowResize.js"></script>
 		<script src="vendor/threex.dragpancontrols.js"></script>
-		<script src=//js.leapmotion.com/leap-0.6.4.js ></script>
+		<script src="//js.leapmotion.com/leap-0.6.4.js" ></script>
 		<script src="js/OBJMTLLoader.js"></script>
 		<script src="js/OBJLoader.js"></script>
 		<script src="js/MTLLoader.js"></script>
@@ -32,7 +32,13 @@
 			<div id="title-menu">
 				<h1>AstroRun</h1>
 				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)">Start</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.OPTIONS)">Options</h2>
 				<h2 onclick="javascript:transitionTo(GameStateEnum.CREDITS)">Credits</h2>
+			</div>
+			<div id="options-menu">
+				<h1>Options</h1>
+				<span><label>Sensitivity</label><input id="sensitivity_input" type="range" value="5" min="1" max="9" onchange="setSensitivity(this.value)" /></span>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 			</div>
 			<div id="credits-menu">
 				<h1>AstroRun Credits</h1>

@@ -160,8 +160,8 @@ function leapAnimate( frame ) {
 
 function updateSpaceshipByMouse() {
     if(spaceship) {
-        var newX = ( mouseX - (window.innerWidth / 2) ) / 4;
-        var newY = ( window.innerHeight-mouseY - (window.innerHeight / 2) ) / 4;
+        var newX = ( mouseX - (window.innerWidth / 2) ) / sensitivityLevel;
+        var newY = ( window.innerHeight-mouseY - (window.innerHeight / 2) ) / sensitivityLevel;
         setSpaceShipPosition(newX, newY, -100);
     }
 }

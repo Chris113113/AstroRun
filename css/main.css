@@ -42,14 +42,26 @@ a:hover {
 
 }
 
-#menu #credits-menu {
+#menu #options-menu {
+	text-align: center;
 	display: none;
 	position: absolute;
 	width: 100%;
 }
 
+#menu #options-menu h1 {
+	margin-top: 10%;
+	margin-bottom: 17%;
+	font-weight: 700;
+	font-size: 4em;
+	text-align: center;
+}
+
 #menu #credits-menu {
 	text-align: center;
+	display: none;
+	position: absolute;
+	width: 100%;
 }
 
 #menu #credits-menu h1 {

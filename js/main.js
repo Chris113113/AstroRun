@@ -1,4 +1,4 @@
-var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4});
+var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4, OPTIONS : 5});
 
 var explosionSound = new Audio("Sounds/Explosion.mp3");
 var hitSound = new Audio("Sounds/Hit.mp3");
@@ -20,6 +20,7 @@ var baseBoneRotation = ( new THREE.Quaternion ).setFromEuler( new THREE.Euler( 0
 var mouseX = window.innerWidth/2;
 var mouseY = window.innerHeight/2;
 var meshes = [];
+var sensitivityLevel = 5;
 
 
 ///////////////////////////
@@ -323,11 +324,16 @@ function transitionTo(newGameState) {
         sceneMainMenu();
     } else if(gameState == GameStateEnum.MENU) {
 
-        if(newGameState == GameStateEnum.CREDITS) {
+        if (newGameState == GameStateEnum.CREDITS) {
         } else if (newGameState == GameStateEnum.PLAYING) {
             startNewGame();
             scenePlaying();
+        } else if (newGameState == GameStateEnum.OPTIONS) {
         } else {
+            throw new Error("Invalid state transition: " + newGameState);
+        }
+    } else if(gameState == GameStateEnum.OPTIONS) {
+        if(newGameState != GameStateEnum.MENU) {
             throw new Error("Invalid state transition: " + newGameState);
         }
     } else if(gameState == GameStateEnum.CREDITS) {
@@ -365,15 +371,15 @@ function transitionTo(newGameState) {
 function drawMenu() {
     var hudDead = document.getElementById('game-hud-dead');
     var hud = document.getElementById('game-hud');
+    var options = document.getElementById('options-menu');
     var credits = document.getElementById('credits-menu');
     var title = document.getElementById('title-menu');
     var fullscreenText = document.getElementById('inlineDoc');
 
     // turn everything off
 
-    var all = [hudDead, hud, credits, title, fullscreenText];
+    var all = [hudDead, hud, options, credits, title, fullscreenText];
     all.forEach(function(item){item.style.display = "none"});
-
 
     if(gameState == GameStateEnum.INIT) {
     } else if(gameState == GameStateEnum.MENU) {
@@ -381,6 +387,10 @@ function drawMenu() {
         fullscreenText.style.display = "block";
 
         console.log("MENU: " + "MAIN")
+    } else if(gameState == GameStateEnum.OPTIONS) {
+        options.style.display = "block";
+
+        console.log("MENU: " + "OPTIONS")
     } else if(gameState == GameStateEnum.CREDITS) {
         credits.style.display = "block";
 
@@ -397,6 +407,10 @@ function drawMenu() {
     } else {
         throw new Error("Invalid state");
     }
+}
+
+function setSensitivity(value) {
+    sensitivityLevel = (10 - value);
 }
 
 // animation loop
