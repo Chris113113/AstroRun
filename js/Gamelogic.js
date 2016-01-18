@@ -44,7 +44,7 @@ function updateAsteroids() {
         }
 
         // Reset positions
-        if(obj.position.z > 100){
+        if(obj.position.z > 500){
             var positionObj = getNewAsteroidPosition();
 
             var newObj = asteroids.shift();

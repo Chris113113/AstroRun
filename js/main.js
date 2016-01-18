@@ -224,7 +224,7 @@ function scenePaused() {
 }
 
 function sceneResumed() {
-    animate();
+    //animate();
     gameTimer.start();
 }
 
@@ -449,9 +449,6 @@ function toggleFPS(checked) {
 // animation loop
 function animate() {
 
-    // loop on request animation loop
-    // - it has to be at the beginning of the function
-    // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
     requestAnimationFrame(animate);
 
     // animate the tunnel
