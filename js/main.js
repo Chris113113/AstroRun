@@ -388,24 +388,24 @@ function drawMenu() {
         title.style.display = "block";
         fullscreenText.style.display = "block";
 
-        console.log("MENU: " + "MAIN")
+        //console.log("MENU: " + "MAIN")
     } else if(gameState == GameStateEnum.OPTIONS) {
         options.style.display = "block";
 
-        console.log("MENU: " + "OPTIONS")
+        //console.log("MENU: " + "OPTIONS")
     } else if(gameState == GameStateEnum.CREDITS) {
         credits.style.display = "block";
 
-        console.log("MENU: " + "CREDITS")
+        //console.log("MENU: " + "CREDITS")
     } else if(gameState == GameStateEnum.PLAYING) {
         hud.style.display = "inline-block";
 
-        console.log("MENU: " + "PLAYING")
+        //console.log("MENU: " + "PLAYING")
     } else if(gameState == GameStateEnum.DEAD) {
         hudDead.style.display = "block";
         hud.style.display = "inline-block";
 
-        console.log("MENU: " + "DEAD")
+        //console.log("MENU: " + "DEAD")
     } else {
         throw new Error("Invalid state");
     }
@@ -413,11 +413,11 @@ function drawMenu() {
 
 function setSensitivity(value) {
     sensitivityLevel = (10 - value);
+
 }
 
 function toggleFPS(checked) {
 
-    console.log('toggleFPS',checked);
     if(checked) {
         document.getElementById("stats").style.display = "block";
     }
@@ -472,6 +472,7 @@ function touchHandler(event)
         case "touchend":   type = "mouseup";   break;
         default:           return;
     }
+
 
     // initMouseEvent(type, canBubble, cancelable, view, clickCount,
     //                screenX, screenY, clientX, clientY, ctrlKey,

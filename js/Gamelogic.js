@@ -212,7 +212,6 @@ function detectCollisions(obj) {
 
     var pos = obj.position.distanceTo(spaceship.position);
     if(pos < 150) {
-        console.log(pos);
         var compBox = new THREE.Box3().setFromObject(obj);
         var ssbox = new THREE.Box3().setFromObject(spaceship);
         var min = compBox.min;
@@ -227,9 +226,6 @@ function detectCollisions(obj) {
             ((nmin.y < smax.y && nmin.y > smin.y ) || ( nmax.y > smin.y && nmax.y < smax.y)) &&
             nmax.z >= smin.z) {
 
-            console.log((nmin.x < smax.x && nmin.x > smin.x ) , ( nmax.x > smin.x && nmax.x < smax.x));
-            console.log((nmin.y < smax.y && nmin.y > smin.y ) , ( nmax.y > smin.y && nmax.y < smax.y));
-            console.log(nmax.z >= smin.z);
             playerHit();
         }
         //if (newBox.isIntersectionBox(new THREE.Box3().setFromObject(spaceship))) {

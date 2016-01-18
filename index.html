@@ -31,22 +31,22 @@
 		<div id="menu">
 			<div id="title-menu">
 				<h1>AstroRun</h1>
-				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)">Start</h2>
-				<h2 onclick="javascript:transitionTo(GameStateEnum.OPTIONS)">Options</h2>
-				<h2 onclick="javascript:transitionTo(GameStateEnum.CREDITS)">Credits</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)" ontouchstart="javascript:transitionTo(GameStateEnum.PLAYING)">Start</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.OPTIONS)" ontouchstart="javascript:transitionTo(GameStateEnum.OPTIONS)">Options</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.CREDITS)" ontouchstart="javascript:transitionTo(GameStateEnum.CREDITS)">Credits</h2>
 			</div>
 			<div id="options-menu">
 				<h1>Options</h1>
-				<span><label>Sensitivity &nbsp;&nbsp;</label><input id="sensitivity_input" type="range" value="5" min="1" max="9" onchange="setSensitivity(this.value)" /></span><br>
-				<span><label>Show FPS &nbsp;&nbsp;</label><input checked onchange="toggleFPS(this.checked)" type="checkbox"/></span>
-				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
+				<span><label>Sensitivity &nbsp;&nbsp;</label><input id="sensitivity_input" type="range" value="5" min="1" max="9" oninput="setSensitivity(this.value)" /></span><br>
+				<span><label>Show FPS &nbsp;&nbsp;</label><input checked oninput="toggleFPS(this.checked)" type="checkbox"/></span>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 			</div>
 			<div id="credits-menu">
 				<h1>AstroRun Credits</h1>
 				<p>Created by Grant Hernandez, Chris Pirillo, and Adam Levy for <a href="http://knighthacks.club">Knight Hacks 2016</a></p>
 				<p>Music provided by <a href="www.bensound.com">Bensound</a>.</p>
 				<p>Spaceship model provided by <a href="http://tf3dm.com/3d-model/stunt-glyder-27766.html">herminio</a></p>
-				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 			</div>
 			<div id="game-hud">
 				<p id="hud-level"></p>
@@ -55,8 +55,8 @@
 			</div>
 			<div id="game-hud-dead">
 				<h1>YOU DIED</h1>
-				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)">Retry</h2>
-				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)">Give up</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)" ontouchstart="javascript:transitionTo(GameStateEnum.PLAYING)">Retry</h2>
+				<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Give up</h2>
 			</div>
 		</div>
 
