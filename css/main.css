@@ -178,3 +178,23 @@ input[type=checkbox]:checked {
 #menu #game-hud-dead h2 {
 	text-align: center;
 }
+
+#menu #game-hud-paused {
+	display: none;
+	position: absolute;
+	width: 100%;
+}
+
+#menu #game-hud-paused h1 {
+	margin-top: 10%;
+	margin-bottom: 12%;
+	font-weight: 700;
+	font-size: 4em;
+	text-align: center;
+	color: red;
+}
+
+#menu #game-hud-paused h3 {
+	text-align: center;
+	color: red;
+}
