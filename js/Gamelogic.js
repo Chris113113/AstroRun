@@ -17,15 +17,15 @@ function initializeAsteroidGame() {
         console.log( item, loaded, total );
     };
 
-    if(!spaceship) loadSpaceship(manager);
-
-    for(var i = 0; i < 10; i++) {
-        if(spawn_asteroids) {
-            setTimeout(function () {
-                asteroids.push(generateAsteroid());
-            }, i * 600);
+    if(!spaceship) loadSpaceship(manager, function() {
+        for(var i = 0; i < 10; i++) {
+            if(spawn_asteroids) {
+                setTimeout(function () {
+                    asteroids.push(generateAsteroid());
+                }, i * 600);
+            }
         }
-    }
+    });
 
 }
 
@@ -283,7 +283,7 @@ function updateTailRings() {
     }
 }
 
-function loadSpaceship(manager) {
+function loadSpaceship(manager, callback) {
     // instantiate a loader
     var loader = new THREE.OBJMTLLoader(manager);
 
@@ -306,6 +306,8 @@ function loadSpaceship(manager) {
                     var axisHelper = new THREE.AxisHelper( 25 );
                     spaceship.add( axisHelper );
                 }
+
+                callback();
             },
             // Function called when downloads progress
             function ( xhr ) {
