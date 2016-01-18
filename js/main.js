@@ -29,7 +29,7 @@ var rangeLimited = true;
 var loadAssets = true;      // load expensive assets and show the progress bar
 var gameplay = true;        // enabled if the game is going to be played
 var usingLeap = false;      // Support for LeapMotion
-var debug_mode = true;      // Shows bounding boxes of asteroids and ship
+var debug_mode = false;     // Shows bounding boxes of asteroids and ship
 var spawn_asteroids = true; // If true, asteroids will spawn
 
 ///////////////////////////
