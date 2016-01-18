@@ -21,31 +21,45 @@ function initializeAsteroidGame() {
 
     for(var i = 0; i < 10; i++) {
         setTimeout(function () {
-            asteroids.push(generateAsteroid({}));
+            asteroids.push(generateAsteroid());
         }, i * 600);
     }
 
 }
 
 function updateAsteroids() {
-    for(var i = asteroids.length - 1; i >= 0; i--) {
+
+    var len = asteroids.length;
+    for(var i = len - 1; i >= 0; i--) {
         var obj = asteroids[i];
+        if(!obj.position) {
+            continue;
+        }
+
         obj.position.z += astVelocity + gameLevel*5;
-        if(obj.position.z > 500){
-            scene.remove(obj);
-            asteroids.splice(i,1);
-            asteroids.push(generateAsteroid({}));
-            if(Math.random() > .95 && asteroids.length < MAX_ASTEROIDS) {
+
+
+        if(spaceship !== undefined && gameState == GameStateEnum.PLAYING) {
+            detectCollisions(obj);
+        }
+
+        // Reset positions
+        if(obj.position.z > 100){
+            var positionObj = getNewAsteroidPosition();
+
+            var newObj = asteroids.shift();
+
+            newObj.position.set(positionObj.x, positionObj.y, positionObj.z);
+
+            asteroids.push(newObj);
+            if(Math.random() > .98 && asteroids.length < MAX_ASTEROIDS) {
                 setTimeout(function() {
-                    asteroids.push(generateAsteroid({}));
+                    asteroids.push(generateAsteroid());
                 }, Math.random()*600+200);
             }
         }
-        else {
-            if(/*numFrames % 3 == 0 && */spaceship !== undefined) {
-                detectCollisions(obj);
-            }
-        }
+
+        if(obj.helper) obj.helper.update();
     }
 }
 
@@ -69,22 +83,31 @@ function updateMesh( bone ) {
     var posY = centerBone[1]-150;
     var posZ = Math.min(-25, Math.max(centerBone[2] - 250.0, -100.0));
 
+    setSpaceShipPosition(posX, posY, posZ);
+
+}
+
+function setSpaceShipPosition(posX, posY, posZ) {
+
+    if(gameState !== GameStateEnum.PLAYING) return;
+
     var r = Math.sqrt(posX*posX + posY*posY);
+    if(posX == 0) posX = .00001;
     var theta = Math.atan(posY/posX);
 
 
-    if(r <= TUNNEL_RADIUS + 10) {
-        spaceship.position.set(posX, posY, posZ);
+    if(r <= TUNNEL_RADIUS) {
+        spaceship.position.set(posX, posY + 5, posZ);
     }
     else {
         r = TUNNEL_RADIUS;
         if(posX > 0) {
             spaceship.position.setX(r * Math.cos(theta));
-            spaceship.position.setY(r * Math.sin(theta));
+            spaceship.position.setY(r * Math.sin(theta) + 5);
         }
         else {
             spaceship.position.setX(-r * Math.cos(theta));
-            spaceship.position.setY(-r * Math.sin(theta));
+            spaceship.position.setY(-r * Math.sin(theta) + 5);
         }
         spaceship.position.setZ(posZ);
     }
@@ -99,12 +122,13 @@ function updateMesh( bone ) {
     camera.lookAt(new THREE.Vector3(0,0,-100));
 
     addTailRing();
-
 }
 
 function leapAnimate( frame ) {
 
-    if(gameState == GameStateEnum.DEAD){
+    usingLeap = true;
+
+    if(gameState == GameStateEnum.DEAD || gameState == GameStateEnum.MENU){
         if (frame.gestures.length > 0) {
             for (var i = 0; i < frame.gestures.length; i++) {
                 var gesture = frame.gestures[i];
@@ -121,13 +145,6 @@ function leapAnimate( frame ) {
     var countBones = 0;
     var countArms = 0;
 
-    armMeshes.forEach(function (item) {
-        scene.remove(item)
-    });
-    boneMeshes.forEach(function (item) {
-        scene.remove(item)
-    });
-
     if(frame.hands[0]) {
         if(spaceship && frame.hands[0].fingers[0].bones[0]) {
             updateMesh(frame.hands[0].fingers[0].bones[0], spaceship);
@@ -141,38 +158,83 @@ function leapAnimate( frame ) {
     stats.update();
 }
 
-function generateAsteroid(mesh) {
+function updateSpaceshipByMouse() {
+    if(spaceship) {
+        var newX = ( mouseX - (window.innerWidth / 2) ) / 4;
+        var newY = ( window.innerHeight-mouseY - (window.innerHeight / 2) ) / 4;
+        setSpaceShipPosition(newX, newY, -100);
+    }
+}
+
+function generateAsteroid() {
     var radius = Math.random() * 3 + 1;
     var geometry = new THREE.SphereGeometry( radius );
     var material = new THREE.MeshNormalMaterial();
     var sphere = new THREE.Mesh( geometry, material );
 
-    // polar coordinates to determine the spawn area of the particles
-    var r = Math.random()*20;
-    var theta = Math.random()*Math.PI*2;
+    var positionObj = getNewAsteroidPosition();
+    sphere.position.set(positionObj.x, positionObj.y, positionObj.z);
 
-    // give it a random x and y position between -500 and 500
-    sphere.position.setX(r * Math.cos(theta));
-    sphere.position.setY(r * Math.sin(theta));
-    sphere.position.setZ(-5000);
     scene.add(sphere);
+
+    if(debug_mode) {
+        sphere.helper = new THREE.BoundingBoxHelper(sphere);
+        sphere.helper.update();
+        scene.add(sphere.helper);
+    }
+
     return sphere;
 }
 
+function getNewAsteroidPosition() {
+    // polar coordinates to determine the spawn area of the particles
+    var r = Math.random()*28;
+    var theta = Math.random()*Math.PI*2;
+
+    // give it a random x and y position between -500 and 500
+
+    var newPosition = {
+        x: 0,
+        y: 0,
+        z: -5000
+    }
+
+    newPosition.x = (r * Math.cos(theta));
+    newPosition.y = (r * Math.sin(theta));
+
+    return newPosition;
+}
+
 function detectCollisions(obj) {
-    if(!spaceship.canCollide) {
+    if(spaceship.recovery) {
         return;
     }
 
     var pos = obj.position.distanceTo(spaceship.position);
-    if(pos < 50) {
+    if(pos < 150) {
+        console.log(pos);
         var compBox = new THREE.Box3().setFromObject(obj);
+        var ssbox = new THREE.Box3().setFromObject(spaceship);
         var min = compBox.min;
         var max = compBox.max;
-        var newBox = new THREE.Box3(new THREE.Vector3(min.x+1, min.y+1, min.z+1), new THREE.Vector3(max.x-1, max.y-1, max.z-1));
-        if (newBox.isIntersectionBox(new THREE.Box3().setFromObject(spaceship))) {
+        var smin = ssbox.min;
+        var smax = ssbox.max;
+
+        var newBox = new THREE.Box3(new THREE.Vector3(min.x + 1, min.y + 1, min.z + 1), new THREE.Vector3(max.x - 1, max.y - 1, max.z - 1));
+        var nmin = newBox.min;
+        var nmax = newBox.max;
+        if(((nmin.x < smax.x && nmin.x > smin.x ) || ( nmax.x > smin.x && nmax.x < smax.x)) &&
+            ((nmin.y < smax.y && nmin.y > smin.y ) || ( nmax.y > smin.y && nmax.y < smax.y)) &&
+            nmax.z >= smin.z) {
+
+            console.log((nmin.x < smax.x && nmin.x > smin.x ) , ( nmax.x > smin.x && nmax.x < smax.x));
+            console.log((nmin.y < smax.y && nmin.y > smin.y ) , ( nmax.y > smin.y && nmax.y < smax.y));
+            console.log(nmax.z >= smin.z);
             playerHit();
         }
+        //if (newBox.isIntersectionBox(new THREE.Box3().setFromObject(spaceship))) {
+        //    playerHit();
+        //}
     }
 }
 
@@ -229,8 +291,12 @@ function loadSpaceship(manager) {
             function ( object ) {
                 object.position.set(0, 250, -1000);
                 spaceship = object;
-                spaceship.canCollide = true;
+                spaceship.recovery = false;
                 scene.add( spaceship );
+                if(debug_mode) {
+                    spaceship.helper = new THREE.BoundingBoxHelper(spaceship);
+                    scene.add(spaceship.helper);
+                }
             },
             // Function called when downloads progress
             function ( xhr ) {

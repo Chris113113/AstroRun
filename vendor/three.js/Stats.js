@@ -1,8 +1,184 @@
-// stats.js r8 - http://github.com/mrdoob/stats.js
-var Stats=function(){var h,a,n=0,o=0,i=Date.now(),u=i,p=i,l=0,q=1E3,r=0,e,j,f,b=[[16,16,48],[0,255,255]],m=0,s=1E3,t=0,d,k,g,c=[[16,48,16],[0,255,0]];h=document.createElement("div");h.style.cursor="pointer";h.style.width="80px";h.style.opacity="0.9";h.style.zIndex="10001";h.addEventListener("mousedown",function(a){a.preventDefault();n=(n+1)%2;n==0?(e.style.display="block",d.style.display="none"):(e.style.display="none",d.style.display="block")},!1);e=document.createElement("div");e.style.textAlign=
-"left";e.style.lineHeight="1.2em";e.style.backgroundColor="rgb("+Math.floor(b[0][0]/2)+","+Math.floor(b[0][1]/2)+","+Math.floor(b[0][2]/2)+")";e.style.padding="0 0 3px 3px";h.appendChild(e);j=document.createElement("div");j.style.fontFamily="Helvetica, Arial, sans-serif";j.style.fontSize="9px";j.style.color="rgb("+b[1][0]+","+b[1][1]+","+b[1][2]+")";j.style.fontWeight="bold";j.innerHTML="FPS";e.appendChild(j);f=document.createElement("div");f.style.position="relative";f.style.width="74px";f.style.height=
-"30px";f.style.backgroundColor="rgb("+b[1][0]+","+b[1][1]+","+b[1][2]+")";for(e.appendChild(f);f.children.length<74;)a=document.createElement("span"),a.style.width="1px",a.style.height="30px",a.style.cssFloat="left",a.style.backgroundColor="rgb("+b[0][0]+","+b[0][1]+","+b[0][2]+")",f.appendChild(a);d=document.createElement("div");d.style.textAlign="left";d.style.lineHeight="1.2em";d.style.backgroundColor="rgb("+Math.floor(c[0][0]/2)+","+Math.floor(c[0][1]/2)+","+Math.floor(c[0][2]/2)+")";d.style.padding=
-"0 0 3px 3px";d.style.display="none";h.appendChild(d);k=document.createElement("div");k.style.fontFamily="Helvetica, Arial, sans-serif";k.style.fontSize="9px";k.style.color="rgb("+c[1][0]+","+c[1][1]+","+c[1][2]+")";k.style.fontWeight="bold";k.innerHTML="MS";d.appendChild(k);g=document.createElement("div");g.style.position="relative";g.style.width="74px";g.style.height="30px";g.style.backgroundColor="rgb("+c[1][0]+","+c[1][1]+","+c[1][2]+")";for(d.appendChild(g);g.children.length<74;)a=document.createElement("span"),
-a.style.width="1px",a.style.height=Math.random()*30+"px",a.style.cssFloat="left",a.style.backgroundColor="rgb("+c[0][0]+","+c[0][1]+","+c[0][2]+")",g.appendChild(a);return{domElement:h,update:function(){i=Date.now();m=i-u;s=Math.min(s,m);t=Math.max(t,m);k.textContent=m+" MS ("+s+"-"+t+")";var a=Math.min(30,30-m/200*30);g.appendChild(g.firstChild).style.height=a+"px";u=i;o++;if(i>p+1E3)l=Math.round(o*1E3/(i-p)),q=Math.min(q,l),r=Math.max(r,l),j.textContent=l+" FPS ("+q+"-"+r+")",a=Math.min(30,30-l/
-100*30),f.appendChild(f.firstChild).style.height=a+"px",p=i,o=0}}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 
+var Stats = function () {
+
+    var now = ( self.performance && self.performance.now ) ? self.performance.now.bind( performance ) : Date.now;
+
+    var startTime = now(), prevTime = startTime;
+    var frames = 0, mode = 0;
+
+    function createElement( tag, id, css ) {
+
+        var element = document.createElement( tag );
+        element.id = id;
+        element.style.cssText = css;
+        return element;
+
+    }
+
+    function createPanel( id, fg, bg ) {
+
+        var div = createElement( 'div', id, 'padding:0 0 3px 3px;text-align:left;background:' + bg );
+
+        var text = createElement( 'div', id + 'Text', 'font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px;color:' + fg );
+        text.innerHTML = id.toUpperCase();
+        div.appendChild( text );
+
+        var graph = createElement( 'div', id + 'Graph', 'width:74px;height:30px;background:' + fg );
+        div.appendChild( graph );
+
+        for ( var i = 0; i < 74; i ++ ) {
+
+            graph.appendChild( createElement( 'span', '', 'width:1px;height:30px;float:left;opacity:0.9;background:' + bg ) );
+
+        }
+
+        return div;
+
+    }
+
+    function setMode( value ) {
+
+        var children = container.children;
+
+        for ( var i = 0; i < children.length; i ++ ) {
+
+            children[ i ].style.display = i === value ? 'block' : 'none';
+
+        }
+
+        mode = value;
+
+    }
+
+    function updateGraph( dom, value ) {
+
+        var child = dom.appendChild( dom.firstChild );
+        child.style.height = Math.min( 30, 30 - value * 30 ) + 'px';
+
+    }
+
+    //
+
+    var container = createElement( 'div', 'stats', 'width:80px;opacity:0.9;cursor:pointer' );
+    container.addEventListener( 'mousedown', function ( event ) {
+
+        event.preventDefault();
+        setMode( ++ mode % container.children.length );
+
+    }, false );
+
+    // FPS
+
+    var fps = 0, fpsMin = Infinity, fpsMax = 0;
+
+    var fpsDiv = createPanel( 'fps', '#0ff', '#002' );
+    var fpsText = fpsDiv.children[ 0 ];
+    var fpsGraph = fpsDiv.children[ 1 ];
+
+    container.appendChild( fpsDiv );
+
+    // MS
+
+    var ms = 0, msMin = Infinity, msMax = 0;
+
+    var msDiv = createPanel( 'ms', '#0f0', '#020' );
+    var msText = msDiv.children[ 0 ];
+    var msGraph = msDiv.children[ 1 ];
+
+    container.appendChild( msDiv );
+
+    // MEM
+
+    if ( self.performance && self.performance.memory ) {
+
+        var mem = 0, memMin = Infinity, memMax = 0;
+
+        var memDiv = createPanel( 'mb', '#f08', '#201' );
+        var memText = memDiv.children[ 0 ];
+        var memGraph = memDiv.children[ 1 ];
+
+        container.appendChild( memDiv );
+
+    }
+
+    //
+
+    setMode( mode );
+
+    return {
+
+        REVISION: 14,
+
+        domElement: container,
+
+        setMode: setMode,
+
+        begin: function () {
+
+            startTime = now();
+
+        },
+
+        end: function () {
+
+            var time = now();
+
+            ms = time - startTime;
+            msMin = Math.min( msMin, ms );
+            msMax = Math.max( msMax, ms );
+
+            msText.textContent = ( ms | 0 ) + ' MS (' + ( msMin | 0 ) + '-' + ( msMax | 0 ) + ')';
+            updateGraph( msGraph, ms / 200 );
+
+            frames ++;
+
+            if ( time > prevTime + 1000 ) {
+
+                fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
+                fpsMin = Math.min( fpsMin, fps );
+                fpsMax = Math.max( fpsMax, fps );
+
+                fpsText.textContent = fps + ' FPS (' + fpsMin + '-' + fpsMax + ')';
+                updateGraph( fpsGraph, fps / 100 );
+
+                prevTime = time;
+                frames = 0;
+
+                if ( mem !== undefined ) {
+
+                    var heapSize = performance.memory.usedJSHeapSize;
+                    var heapSizeLimit = performance.memory.jsHeapSizeLimit;
+
+                    mem = Math.round( heapSize * 0.000000954 );
+                    memMin = Math.min( memMin, mem );
+                    memMax = Math.max( memMax, mem );
+
+                    memText.textContent = mem + ' MB (' + memMin + '-' + memMax + ')';
+                    updateGraph( memGraph, heapSize / heapSizeLimit );
+
+                }
+
+            }
+
+            return time;
+
+        },
+
+        update: function () {
+
+            startTime = this.end();
+
+        }
+
+    };
+
+};
+
+if ( typeof module === 'object' ) {
+
+    module.exports = Stats;
+
+}
