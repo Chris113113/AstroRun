@@ -14,12 +14,11 @@ var gameTimerUpdateString = undefined;
 // RENDER STATE
 ///////////////////////////
 var stats, scene, renderer;
-var camera, cameraControl;
+var camera;
 
 var baseBoneRotation = ( new THREE.Quaternion ).setFromEuler( new THREE.Euler( 0, 0, Math.PI / 2 ) );
 var mouseX = window.innerWidth/2;
 var mouseY = window.innerHeight/2;
-var meshes = [];
 var sensitivityLevel = 5;
 var animateID;
 
@@ -27,9 +26,9 @@ var animateID;
 // SETTINGS
 ///////////////////////////
 var rangeLimited = true;
-var loadAssets = true; // load expensive assets and show the progress bar
-var gameplay = true; // enabled if the game is going to be played
-var usingLeap = false; // Support for LeapMotion
+var loadAssets = true;  // load expensive assets and show the progress bar
+var gameplay = true;    // enabled if the game is going to be played
+var usingLeap = false;  // Support for LeapMotion
 var debug_mode = false; // Shows bounding boxes of asteroids and ship
 
 ///////////////////////////
@@ -144,6 +143,7 @@ function init(){
     if(gameplay) {
         Leap.loop( {background: true}, leapAnimate ).connect();
     }
+
 }
 
 function clearScene() {
@@ -474,7 +474,6 @@ var numFrames = 0;
 // render the scene
 function render() {
 
-    // actually render the scene
     renderer.render( scene, camera );
 }
 

@@ -95,7 +95,6 @@ function setSpaceShipPosition(posX, posY, posZ) {
     if(posX == 0) posX = .00001;
     var theta = Math.atan(posY/posX);
 
-
     if(r <= TUNNEL_RADIUS * TUNNEL_RADIUS) {
         spaceship.position.set(posX, posY + 5, posZ);
     }
