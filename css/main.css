@@ -47,10 +47,23 @@ a:hover {
 	display: none;
 	position: absolute;
 	width: 100%;
+	line-height:6.5vh;
+	padding-top: 3vh;
 }
 
-#menu #options-menu .checkbox {
-	siz
+input[type=checkbox] {
+	text-align: center;
+	position: absolute;
+	font-size: large;
+	transform: scale(2);
+	-webkit-transform: scale(2);
+	margin-top: 2vh;
+}
+
+input[type=checkbox]:checked {
+	text-align: center;
+	position: absolute;
+	margin-top: 2vh;
 }
 
 #menu #options-menu h1 {
