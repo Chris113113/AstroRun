@@ -225,14 +225,14 @@ input[type=checkbox]:checked {
 
 #menu #leaderboard-menu h1 {
 	margin-top: 10%;
-	margin-bottom: 17%;
+	margin-bottom: 0%;
 	font-weight: 700;
 	font-size: 4em;
 	text-align: center;
 }
 
 #menu #leaderboard-menu ol {
-	margin-top: 10%;
+	margin-top: 5%;
 	margin-bottom: 17%;
 	font-weight: 700;
 	font-size: 1em;
