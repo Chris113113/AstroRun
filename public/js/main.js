@@ -22,6 +22,7 @@ var mouseY = window.innerHeight/2;
 var sensitivityLevel = 5;
 var animateID;
 var totalSeconds;
+var submitted = false;
 
 ///////////////////////////
 // SETTINGS
@@ -257,6 +258,7 @@ function startNewGame() {
     resetGameState();
     var nextLevelTime = 15;
     gameTimer.start();
+    submitted = false;
 
     // update the play timer
     gameTimerUpdateString = setInterval(function() {
@@ -545,8 +547,11 @@ function touchHandler(event)
 
 function submitScore() {
     console.log('submitting score of', totalSeconds,'for',$("#high_score_input").val());
-    $.post('addScore', {username: $("#high_score_input").val(), totSeconds: totalSeconds}, function(data, result) {
-        console.log('Submission request returned ', data.success);
-        if(!data.success) console.log(data.errMessage);
-    });
+    if(!submitted){
+        $.post('addScore', {username: $("#high_score_input").val(), totSeconds: totalSeconds}, function(data, result) {
+            console.log('Submission request returned ', data.success);
+            if(!data.success) console.log(data.errMessage);
+        });
+        submitted = true;
+    }
 }
