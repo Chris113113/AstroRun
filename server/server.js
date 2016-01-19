@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({
 
 require(__dirname+'/mongo_models/score.js');
 var Score = mongoose.model('scores');
-var numLeaders = 5;
+var numLeaders = 100;
 
 
 app.get('/', function(req, res){

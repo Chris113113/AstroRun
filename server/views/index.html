@@ -43,7 +43,7 @@
 			<h1>Options</h1>
 			<span><label>Sensitivity &nbsp;&nbsp;</label><input id="sensitivity_input" type="range" value="5" min="1" max="9" oninput="setSensitivity(this.value)" /></span><br/>
 			<span ontouchstart="toggleFPS(this.checked)" ><label>Show FPS &nbsp;&nbsp;</label><input id="fps_checkbox" checked onclick="toggleFPS(this.checked)" type="checkbox"/></span><br/>
-			<span ontouchstart="toggleMusic(this.checked" ><label>Play Music &nbsp;&nbsp;</label><input id="music_checkbox" onclick="toggleMusic(this.checked)" checked type="checkbox"/></span>
+			<span ontouchstart="toggleMusic(this.checked)" ><label>Play Music &nbsp;&nbsp;</label><input id="music_checkbox" onclick="toggleMusic(this.checked)" checked type="checkbox"/></span>
 			<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 		</div>
 		<div id="credits-menu">
@@ -55,7 +55,9 @@
 		</div>
 		<div id="leaderboard-menu">
 			<h1>Leaderboard</h1>
-			<ol id="leaders" class="center"></ol>
+			<div id="getHighScoresContainer">
+				<ol id="leaders" class="center"></ol>
+			</div>
 			<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 		</div>
 		<div id="game-hud">
@@ -66,7 +68,9 @@
 		<div id="game-hud-dead">
 			<h1>YOU DIED</h1>
 			<div><input id="high_score_input" placeholder="Enter your name" /></div>
-			<h2 onclick="javascript:submitScore()" ontouchstart="javascript:submitScore()">Submit</h2>
+			<h2 id="submit_button" onclick="javascript:submitScore()" ontouchstart="javascript:submitScore()">Submit</h2>
+			<h3 id="submission_message" >Success</h3>
+			<h2>&nbsp;</h2>
 			<h2 onclick="javascript:transitionTo(GameStateEnum.PLAYING)" ontouchstart="javascript:transitionTo(GameStateEnum.PLAYING)">Retry</h2>
 			<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Give up</h2>
 		</div>
