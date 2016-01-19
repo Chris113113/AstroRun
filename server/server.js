@@ -4,7 +4,7 @@ var bodyParser = require('body-parser')
 var app = express();
 mongoose.connect('mongodb://localhost/AstroRunDB');
 
-app.use(express.static('public'));
+app.use(express.static('../public'));
 
 
 
