@@ -28,6 +28,24 @@ app.post('/addScore', function(req, res){
         score : req.body.totSeconds
     });
 
+    if(score.score === undefined) {
+        res.json({
+            success    : false,
+            errMessage : "Could not save score. Score was undefined"
+        });
+        return;
+    }
+
+    if(score.username === undefined || score.username === '') {
+        res.json({
+            success    : false,
+            errMessage : "Could not save score. Username was undefined"
+        });
+        return;
+    }
+
+    console.log('Saving score', score.username, ':', score.score);
+
     score.save(function(err){
         if(err){
             console.log("Error saving the users score " + err);
@@ -40,6 +58,7 @@ app.post('/addScore', function(req, res){
         res.json({
             success : true
         });
+        return;
     });
 });
 

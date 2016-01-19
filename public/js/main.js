@@ -519,3 +519,11 @@ function touchHandler(event)
     first.target.dispatchEvent(simulatedEvent);
     event.preventDefault();
 }
+
+function submitScore() {
+    console.log('submitting score of', totalSeconds,'for',$("#high_score_input").val());
+    $.post('addScore', {username: $("#high_score_input").val(), totSeconds: totalSeconds}, function(data, result) {
+        console.log('Submission request returned ', data.success);
+        if(!data.success) console.log(data.errMessage);
+    });
+}

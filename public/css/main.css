@@ -168,6 +168,21 @@ input[type=checkbox]:checked {
 	width: 100%;
 }
 
+#menu #game-hud-dead div {
+	width: 100%;
+	margin: auto;
+}
+
+#menu #game-hud-dead input {
+	width: 100%;
+	text-align: center;
+	background-color:rgba(0, 0, 0, 0);
+	color:white;
+	border: none;
+	outline: none;
+	font-size: xx-large;
+}
+
 #menu #game-hud-dead h1 {
 	margin-top: 10%;
 	margin-bottom: 17%;
