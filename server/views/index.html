@@ -27,7 +27,7 @@
 </head>
 <body>
 
-<audio src="Sounds/house-bgm.mp3" loop autoplay></audio>
+<audio id="music-player" src="Sounds/house-bgm.mp3" loop autoplay></audio>
 
 <!-- three.js container -->
 <div id="container">
@@ -41,8 +41,9 @@
 		</div>
 		<div id="options-menu">
 			<h1>Options</h1>
-			<span><label>Sensitivity &nbsp;&nbsp;</label><input id="sensitivity_input" type="range" value="5" min="1" max="9" oninput="setSensitivity(this.value)" /></span><br>
-			<span ontouchstart="toggleFPS(this.checked)" ><label>Show FPS &nbsp;&nbsp;</label><input id="fps_checkbox" checked onclick="toggleFPS(this.checked)" type="checkbox"/></span>
+			<span><label>Sensitivity &nbsp;&nbsp;</label><input id="sensitivity_input" type="range" value="5" min="1" max="9" oninput="setSensitivity(this.value)" /></span><br/>
+			<span ontouchstart="toggleFPS(this.checked)" ><label>Show FPS &nbsp;&nbsp;</label><input id="fps_checkbox" checked onclick="toggleFPS(this.checked)" type="checkbox"/></span><br/>
+			<span ontouchstart="toggleMusic(this.checked" ><label>Play Music &nbsp;&nbsp;</label><input id="music_checkbox" onclick="toggleMusic(this.checked)" checked type="checkbox"/></span>
 			<h2 onclick="javascript:transitionTo(GameStateEnum.MENU)" ontouchstart="javascript:transitionTo(GameStateEnum.MENU)">Back</h2>
 		</div>
 		<div id="credits-menu">

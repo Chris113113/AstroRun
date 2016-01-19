@@ -462,6 +462,23 @@ function toggleFPS(checked) {
     }
 }
 
+function toggleMusic(checked) {
+    if(checked == undefined) {
+        var cb = document.getElementById("music_checkbox")
+        cb.checked = !cb.checked;
+        checked = cb.checked;
+    }
+
+    var music = document.getElementById("music-player");
+
+    if(checked) {
+        music.play();
+    } else {
+        music.pause();
+        music.currentTime = 0;
+    }
+}
+
 // animation loop
 function animate() {
 
