@@ -1,0 +1,24 @@
+{
+  "name": "astrorun",
+  "version": "1.0.0",
+  "description": "3D Astroid avoidance game written in Javascript utilizng the LeapMotion SDK and ThreeJS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chris113113/AstroRun.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chris113113/AstroRun/issues"
+  },
+  "homepage": "https://github.com/chris113113/AstroRun#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "express": "^4.13.3",
+    "mongoose": "^4.3.6"
+  }
+}

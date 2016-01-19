@@ -4,7 +4,7 @@ var bodyParser = require('body-parser')
 var app = express();
 mongoose.connect('mongodb://localhost/AstroRunDB');
 
-app.use(express.static('../public'));
+app.use(express.static('public'));
 
 
 
@@ -21,7 +21,6 @@ var numLeaders = 5;
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/views/index.html');
 });
-
 
 app.post('/addScore', function(req, res){
     var score = new Score ({
@@ -107,6 +106,10 @@ function formatLeaderboard(leaders, fn){
     }
     return fn(null, formattedLeaders);
 }
+
+app.get(/^(.+)$/, function(req, res) {
+    res.sendFile(__dirname + '/public/' + req.params[0]);
+});
 
 var portNumber = 8000;
 app.listen(portNumber);
