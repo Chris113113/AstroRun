@@ -131,7 +131,7 @@ app.get(/^(.+)$/, function(req, res) {
     res.sendFile(__dirname + '/public/' + req.params[0]);
 });
 
-var portNumber = 8000;
+var portNumber = 80;
 app.listen(portNumber);
 
 console.log("AstroRun Server is listening on port " + portNumber);
