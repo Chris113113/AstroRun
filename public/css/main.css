@@ -200,3 +200,27 @@ input[type=checkbox]:checked {
 	text-align: center;
 	color: red;
 }
+
+#menu #leaderboard-menu {
+	text-align: center;
+	display: none;
+	position: absolute;
+	width: 100%;
+}
+
+#menu #leaderboard-menu h1 {
+	margin-top: 10%;
+	margin-bottom: 17%;
+	font-weight: 700;
+	font-size: 4em;
+	text-align: center;
+}
+
+#menu #leaderboard-menu ol {
+	margin-top: 10%;
+	margin-bottom: 17%;
+	font-weight: 700;
+	font-size: 1em;
+	text-align: center;
+	list-style-position:inside;
+}

@@ -1,4 +1,4 @@
-var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4, OPTIONS : 5, PAUSED : 6});
+var GameStateEnum = Object.freeze({MENU : 0, CREDITS: 1, PLAYING : 2, DEAD: 3, INIT : 4, OPTIONS : 5, PAUSED : 6, LEADERBOARD : 7});
 
 var explosionSound = new Audio("Sounds/Explosion.mp3");
 var hitSound = new Audio("Sounds/Hit.mp3");
@@ -14,23 +14,24 @@ var gameTimerUpdateString = undefined;
 // RENDER STATE
 ///////////////////////////
 var stats, scene, renderer;
-var camera, cameraControl;
+var camera;
 
 var baseBoneRotation = ( new THREE.Quaternion ).setFromEuler( new THREE.Euler( 0, 0, Math.PI / 2 ) );
 var mouseX = window.innerWidth/2;
 var mouseY = window.innerHeight/2;
-var meshes = [];
 var sensitivityLevel = 5;
 var animateID;
+var totalSeconds;
 
 ///////////////////////////
 // SETTINGS
 ///////////////////////////
 var rangeLimited = true;
-var loadAssets = true; // load expensive assets and show the progress bar
-var gameplay = true; // enabled if the game is going to be played
-var usingLeap = false; // Support for LeapMotion
-var debug_mode = false; // Shows bounding boxes of asteroids and ship
+var loadAssets = true;      // load expensive assets and show the progress bar
+var gameplay = true;        // enabled if the game is going to be played
+var usingLeap = false;      // Support for LeapMotion
+var debug_mode = false;     // Shows bounding boxes of asteroids and ship
+var spawn_asteroids = true; // If true, asteroids will spawn
 
 ///////////////////////////
 // ENVIRONMENT VARIABLES
@@ -144,6 +145,7 @@ function init(){
     if(gameplay) {
         Leap.loop( {background: true}, leapAnimate ).connect();
     }
+
 }
 
 function clearScene() {
@@ -260,7 +262,7 @@ function startNewGame() {
     gameTimerUpdateString = setInterval(function() {
         var minutes = parseInt(gameTimer.getElapsedTime()/60);
         var seconds = parseInt(gameTimer.getElapsedTime() % 60);
-        var totalSeconds = parseInt(gameTimer.getElapsedTime());
+        totalSeconds = parseInt(gameTimer.getElapsedTime());
 
         if(totalSeconds >= nextLevelTime){
             currColorPointer = (currColorPointer+1) % levelColorArray.length;
@@ -342,6 +344,7 @@ function transitionTo(newGameState) {
             startNewGame();
             scenePlaying();
         } else if (newGameState == GameStateEnum.OPTIONS) {
+        } else if (newGameState == GameStateEnum.LEADERBOARD){
         } else {
             throw new Error("Invalid state transition: " + newGameState);
         }
@@ -374,9 +377,13 @@ function transitionTo(newGameState) {
         } else {
             throw new Error("Invalid state transition: " + newGameState);
         }
-    } else if(gameState == GameStateEnum.PAUSED){
-        if(newGameState == GameStateEnum.PLAYING){
+    } else if(gameState == GameStateEnum.PAUSED) {
+        if(newGameState == GameStateEnum.PLAYING) {
             sceneResumed();
+        }
+    } else if(gameState == GameStateEnum.LEADERBOARD) {
+        if(newGameState != GameStateEnum.MENU) {
+            throw new Error("Invalid state transition: " + newGameState);
         }
     } else {
         throw new Error("Invalid state");
@@ -395,10 +402,10 @@ function drawMenu() {
     var title = document.getElementById('title-menu');
     var fullscreenText = document.getElementById('inlineDoc');
     var hudPaused = document.getElementById('game-hud-paused');
-
+    var leaderboard = document.getElementById('leaderboard-menu');
     // turn everything off
 
-    var all = [hudDead, hud, options, credits, title, fullscreenText, hudPaused];
+    var all = [hudDead, hud, options, credits, title, fullscreenText, hudPaused, leaderboard];
     all.forEach(function(item){item.style.display = "none"});
 
     if(gameState == GameStateEnum.INIT) {
@@ -427,6 +434,8 @@ function drawMenu() {
     } else if(gameState == GameStateEnum.PAUSED) {
         hudPaused.style.display = "block";
 
+    } else if(gameState == GameStateEnum.LEADERBOARD) {
+        leaderboard.style.display = "block";
     } else {
         throw new Error("Invalid state");
     }
@@ -438,6 +447,12 @@ function setSensitivity(value) {
 }
 
 function toggleFPS(checked) {
+
+    if(checked == undefined) {
+        var cb = document.getElementById("fps_checkbox")
+        cb.checked = !cb.checked;
+        checked = cb.checked;
+    }
 
     if(checked) {
         document.getElementById("stats").style.display = "block";
@@ -474,7 +489,6 @@ var numFrames = 0;
 // render the scene
 function render() {
 
-    // actually render the scene
     renderer.render( scene, camera );
 }
 

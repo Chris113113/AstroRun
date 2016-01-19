@@ -17,13 +17,15 @@ function initializeAsteroidGame() {
         console.log( item, loaded, total );
     };
 
-    if(!spaceship) loadSpaceship(manager);
-
-    for(var i = 0; i < 10; i++) {
-        setTimeout(function () {
-            asteroids.push(generateAsteroid());
-        }, i * 600);
-    }
+    if(!spaceship) loadSpaceship(manager, function() {
+        for(var i = 0; i < 10; i++) {
+            if(spawn_asteroids) {
+                setTimeout(function () {
+                    asteroids.push(generateAsteroid());
+                }, i * 600);
+            }
+        }
+    });
 
 }
 
@@ -91,10 +93,12 @@ function setSpaceShipPosition(posX, posY, posZ) {
 
     if(gameState !== GameStateEnum.PLAYING) return;
 
+    var oldXPos = spaceship.position.x;
+    var oldYPos = spaceship.position.y;
+
     var r = (posX*posX + posY*posY);
     if(posX == 0) posX = .00001;
     var theta = Math.atan(posY/posX);
-
 
     if(r <= TUNNEL_RADIUS * TUNNEL_RADIUS) {
         spaceship.position.set(posX, posY + 5, posZ);
@@ -111,11 +115,23 @@ function setSpaceShipPosition(posX, posY, posZ) {
         }
         spaceship.position.setZ(posZ);
     }
-    //mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( bone.matrix() ) );
-    //mesh.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [-Math.PI/2,-Math.PI/2,Math.PI/2,'XYZ'] ) );
-    spaceship.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [Math.PI,Math.PI*11/6,0,'XYZ'] ) );
-    spaceship.quaternion.multiply( baseBoneRotation );
+
     spaceship.scale.set( .025, .025, .025 );
+
+    var newXPos = spaceship.position.x;
+
+    var xRot = Math.PI;
+    var yRot = Math.PI * 11/6;
+
+    if(oldXPos == newXPos && spaceship.rotation.x != Math.PI) {
+        xRot += (spaceship.rotation.x - xRot) / 20;
+    }
+    else {
+        xRot -= (oldXPos - newXPos) / 1.5;
+    }
+
+    spaceship.setRotationFromMatrix( ( new THREE.Matrix4 ).fromArray( [xRot,yRot,0,'XYZ'] ) );
+    spaceship.quaternion.multiply( baseBoneRotation );
 
     camera.position.setX(spaceship.position.x / 4);
     camera.position.setY(spaceship.position.y / 4);
@@ -142,9 +158,6 @@ function leapAnimate( frame ) {
     if(gameState != GameStateEnum.PLAYING)
         return;
 
-    var countBones = 0;
-    var countArms = 0;
-
     if(frame.hands[0]) {
         if(spaceship && frame.hands[0].fingers[0].bones[0]) {
             updateMesh(frame.hands[0].fingers[0].bones[0], spaceship);
@@ -154,8 +167,6 @@ function leapAnimate( frame ) {
 
     }
 
-    renderer.render( scene, camera );
-    stats.update();
 }
 
 function updateSpaceshipByMouse() {
@@ -270,7 +281,7 @@ function updateTailRings() {
     }
 }
 
-function loadSpaceship(manager) {
+function loadSpaceship(manager, callback) {
     // instantiate a loader
     var loader = new THREE.OBJMTLLoader(manager);
 
@@ -278,10 +289,8 @@ function loadSpaceship(manager) {
         // load an obj / mtl resource pair
         loader.load(
             // OBJ resource URL
-            //'models/interceptor/alien_interceptor_flying.obj',
-            //// MTL resource URL
-            //'models/interceptor/alien_interceptor_flying.mtl',
             'models/stuntglyder/stunt_glyder.obj',
+            // MTL resource URL
             'models/stuntglyder/stunt_glyder.mtl',
             // Function when both resources are loaded
             function ( object ) {
@@ -292,7 +301,11 @@ function loadSpaceship(manager) {
                 if(debug_mode) {
                     spaceship.helper = new THREE.BoundingBoxHelper(spaceship);
                     scene.add(spaceship.helper);
+                    var axisHelper = new THREE.AxisHelper( 25 );
+                    spaceship.add( axisHelper );
                 }
+
+                callback();
             },
             // Function called when downloads progress
             function ( xhr ) {
