@@ -379,6 +379,7 @@ function transitionTo(newGameState) {
         } else {
             throw new Error("Invalid state transition: " + newGameState);
         }
+        resetGameOverScreen();
     } else if(gameState == GameStateEnum.PAUSED) {
         if(newGameState == GameStateEnum.PLAYING) {
             sceneResumed();
@@ -547,11 +548,24 @@ function touchHandler(event)
 
 function submitScore() {
     console.log('submitting score of', totalSeconds,'for',$("#high_score_input").val());
-    if(!submitted){
-        $.post('addScore', {username: $("#high_score_input").val(), totSeconds: totalSeconds}, function(data, result) {
+    if(!submitted) {
+        $.post('addScore', {username: $("#high_score_input").val(), totSeconds: totalSeconds}, function (data, result) {
             console.log('Submission request returned ', data.success);
-            if(!data.success) console.log(data.errMessage);
+            if (data.success) {
+                $("#submission_message").text("Success");
+                $("#submit_button").hide();
+                submitted = true;
+            }
+            else {
+                console.log(data.errMessage);
+                $("#submission_message").text("Submission Failed");
+                submitted = false;
+            }
+            $("#submission_message").show();
         });
-        submitted = true;
     }
+}
+
+function resetGameOverScreen() {
+    $("#submit_button").show();
 }
