@@ -4,12 +4,17 @@ $(document).ready(function() {
 
         $.get('getHighScores', function(data, result){
             $('#leaders').html("<li>"+data.leaders[0].username+"    "+data.leaders[0].score+"</li>");
-            $('#leaders').append("<li>"+data.leaders[1].username+"    "+data.leaders[1].score+"</li>");
-            $('#leaders').append("<li>"+data.leaders[2].username+"    "+data.leaders[2].score+"</li>");
-            $('#leaders').append("<li>"+data.leaders[3].username+"    "+data.leaders[3].score+"</li>");
-            $('#leaders').append("<li>"+data.leaders[4].username+"    "+data.leaders[4].score+"</li>");
+            data.leaders.forEach( function(el) {
+                $('#leaders').append("<li>"+el.username+"    "+el.score+"</li>");
+            });
         });
 
+        $("#getHighScoresContainer").height(window.innerHeight / 2);
+
     });
+
+    $("getHighScores").on("tap", function() {
+        $("getHighScores").click();
+    })
 
 });

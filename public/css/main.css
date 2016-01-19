@@ -105,6 +105,12 @@ input[type=checkbox]:checked {
 	font-size: xx-large;
 }
 
+#menu h3  {
+	text-align: center;
+	font-size: x-large;
+	display: none;
+}
+
 #menu #title-menu h1 {
 	margin-top: 10%;
 	margin-bottom: 17%;
@@ -229,6 +235,11 @@ input[type=checkbox]:checked {
 	font-weight: 700;
 	font-size: 4em;
 	text-align: center;
+}
+
+#menu #leaderboard-menu div {
+	overflow: hidden;
+	overflow-y: scroll;
 }
 
 #menu #leaderboard-menu ol {

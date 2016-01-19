@@ -22,6 +22,7 @@ var mouseY = window.innerHeight/2;
 var sensitivityLevel = 5;
 var animateID;
 var totalSeconds;
+var submitted = false;
 
 ///////////////////////////
 // SETTINGS
@@ -257,6 +258,7 @@ function startNewGame() {
     resetGameState();
     var nextLevelTime = 15;
     gameTimer.start();
+    submitted = false;
 
     // update the play timer
     gameTimerUpdateString = setInterval(function() {
@@ -377,6 +379,7 @@ function transitionTo(newGameState) {
         } else {
             throw new Error("Invalid state transition: " + newGameState);
         }
+        resetGameOverScreen();
     } else if(gameState == GameStateEnum.PAUSED) {
         if(newGameState == GameStateEnum.PLAYING) {
             sceneResumed();
@@ -545,8 +548,25 @@ function touchHandler(event)
 
 function submitScore() {
     console.log('submitting score of', totalSeconds,'for',$("#high_score_input").val());
-    $.post('addScore', {username: $("#high_score_input").val(), totSeconds: totalSeconds}, function(data, result) {
-        console.log('Submission request returned ', data.success);
-        if(!data.success) console.log(data.errMessage);
-    });
+    if(!submitted) {
+        $.post('addScore', {username: $("#high_score_input").val(), totSeconds: totalSeconds}, function (data, result) {
+            console.log('Submission request returned ', data.success);
+            if (data.success) {
+                $("#submission_message").text("Success");
+                $("#submit_button").hide();
+                submitted = true;
+            }
+            else {
+                console.log(data.errMessage);
+                $("#submission_message").text("Submission Failed");
+                submitted = false;
+            }
+            $("#submission_message").show();
+        });
+    }
+}
+
+function resetGameOverScreen() {
+    $("#submit_button").show();
+    $("#submission_message").hide();
 }
