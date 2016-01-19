@@ -107,6 +107,7 @@ function formatLeaderboard(leaders, fn){
     return fn(null, formattedLeaders);
 }
 
+// This is the fix
 app.get(/^(.+)$/, function(req, res) {
     res.sendFile(__dirname + '/public/' + req.params[0]);
 });
