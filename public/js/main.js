@@ -568,5 +568,4 @@ function submitScore() {
 
 function resetGameOverScreen() {
     $("#submit_button").show();
-    $("#submission_message").hide();
 }
