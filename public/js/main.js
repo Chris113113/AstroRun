@@ -432,6 +432,7 @@ function drawMenu() {
     } else if(gameState == GameStateEnum.DEAD) {
         hudDead.style.display = "block";
         hud.style.display = "inline-block";
+        $("#high_score_input").focus();
 
         //console.log("MENU: " + "DEAD")
     } else if(gameState == GameStateEnum.PAUSED) {
@@ -569,3 +570,11 @@ function submitScore() {
 function resetGameOverScreen() {
     $("#submit_button").show();
 }
+
+$("#high_score_input").on("focus", function(e) {
+    THREEx.FullScreen.blocked = true;
+});
+
+$("#high_score_input").on("focusout", function(e) {
+    THREEx.FullScreen.blocked = false;
+})

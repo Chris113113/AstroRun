@@ -10,7 +10,6 @@ body {
 
 }
 
-
 #info .top {
 	position	: absolute;
 	top		: 0px;
@@ -36,10 +35,6 @@ a:hover {
 	bottom		: 0px;
 	right		: 5px;
 	padding		: 5px;
-}
-
-#menu {
-
 }
 
 #menu #options-menu {
@@ -99,10 +94,6 @@ input[type=checkbox]:checked {
 
 #menu #title-menu h2 {
 	text-align: center;
-}
-
-#menu h2:hover  {
-	font-size: xx-large;
 }
 
 #menu h3  {
@@ -237,6 +228,44 @@ input[type=checkbox]:checked {
 	text-align: center;
 }
 
+#menu #leaderboard-menu #leaderContainer {
+	overflow: hidden;
+	overflow-y: scroll;
+}
+
+#menu #leaderboard-menu #topLeaderContainer {
+
+	overflow: visible;
+}
+
+#menu #leaderboard-menu #topLeaders {
+	-webkit-transform: scale(1.25);
+	-moz-transform: scale(1.25);
+	-ms-transform: scale(1.25);
+	-o-transform: scale(1.25);
+	transform: scale(1.25);
+	color: #ffe343;
+	margin-top: 5%;
+	margin-bottom:1%;
+	font-weight: 700;
+	font-size: 1em;
+	text-align: center;
+	list-style-position:inside;
+}
+
+#menu #leaderboard-menu #leaders {
+	margin-top: 0%;
+	margin-bottom:17%;
+	font-weight: 700;
+	font-size: 1em;
+	text-align: center;
+	list-style-position:inside;
+}
+
+#menu h2:hover {
+	transform: scale(1.5);
+}
+
 #menu #leaderboard-menu h2 {
 	margin-top: 5%;
 	margin-bottom: 0%;
@@ -245,18 +274,4 @@ input[type=checkbox]:checked {
 	text-align: center;
 	vertical-align: : top;
 	position: : absolute;
-}
-
-#menu #leaderboard-menu div {
-	overflow: hidden;
-	overflow-y: scroll;
-}
-
-#menu #leaderboard-menu ol {
-	margin-top: 5%;
-	margin-bottom: 17%;
-	font-weight: 700;
-	font-size: 1em;
-	text-align: center;
-	list-style-position:inside;
 }

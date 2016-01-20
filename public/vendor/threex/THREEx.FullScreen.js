@@ -20,6 +20,7 @@ THREEx.FullScreen	= THREEx.FullScreen	|| {};
  * 
  * @returns {Boolean} true if fullscreen API is available, false otherwise
 */
+THREEx.FullScreen.blocked = false;
 THREEx.FullScreen.available	= function()
 {
 	return this._hasWebkitFullScreen || this._hasMozFullScreen;
@@ -47,6 +48,9 @@ THREEx.FullScreen.activated	= function()
 */
 THREEx.FullScreen.request	= function(element)
 {
+	if(THREEx.FullScreen.blocked) {
+		return false;
+	}
 	element	= element	|| document.body;
 	if( this._hasWebkitFullScreen ){
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
