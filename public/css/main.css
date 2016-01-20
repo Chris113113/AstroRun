@@ -265,3 +265,13 @@ input[type=checkbox]:checked {
 #menu h2:hover {
 	transform: scale(1.5);
 }
+
+#menu #leaderboard-menu h2 {
+	margin-top: 5%;
+	margin-bottom: 0%;
+	font-weight: 700;
+	font-size: 2em;
+	text-align: center;
+	vertical-align: : top;
+	position: : absolute;
+}
