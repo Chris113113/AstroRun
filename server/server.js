@@ -1,6 +1,7 @@
 var express = require('express')
 var mongoose = require('mongoose')
 var bodyParser = require('body-parser')
+var morgan = require('morgan')
 var app = express();
 mongoose.connect('mongodb://localhost/AstroRunDB');
 
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(morgan('combined'));
 
 require(__dirname+'/mongo_models/score.js');
 var Score = mongoose.model('scores');
