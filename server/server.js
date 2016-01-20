@@ -109,6 +109,7 @@ function formatLeaderboard(leaders, fn){
             username : "",
             score : ""
         }
+
         tempLeader.username = leaders[i].username;
 
         var min = Math.floor(leaders[i].score / 60);
