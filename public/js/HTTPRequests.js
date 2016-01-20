@@ -3,13 +3,22 @@ $(document).ready(function() {
     $("#getHighScores").click(function(event){
 
         $.get('getHighScores', function(data, result){
-            $('#leaders').html("<li>"+data.leaders[0].username+"    "+data.leaders[0].score+"</li>");
-            data.leaders.forEach( function(el) {
+            // Separate div for top 3
+            for(var i = 0; i < 3; i++) {
+                if (i < data.leaders.length) {
+                    var el = data.leaders[i];
+                    $('#topLeaders').append("<li>"+el.username+"    "+el.score+"</li>");
+                }
+            }
+
+            // Rest of leaderboard
+            for(var i = 3; i < data.leaders.length; i++) {
+                var el = data.leaders[i];
                 $('#leaders').append("<li>"+el.username+"    "+el.score+"</li>");
-            });
+            }
         });
 
-        $("#getHighScoresContainer").height(window.innerHeight / 2);
+        $("#leaderContainer").height(window.innerHeight / 2);
 
     });
 
