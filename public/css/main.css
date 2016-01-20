@@ -237,6 +237,16 @@ input[type=checkbox]:checked {
 	text-align: center;
 }
 
+#menu #leaderboard-menu h2 {
+	margin-top: 5%;
+	margin-bottom: 0%;
+	font-weight: 700;
+	font-size: 2em;
+	text-align: center;
+	vertical-align: : top;
+	position: : absolute;
+}
+
 #menu #leaderboard-menu div {
 	overflow: hidden;
 	overflow-y: scroll;
